@@ -2,12 +2,56 @@
 <html lang = "en">
     <head>
         <meta charset= "UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title> Tab Game </title>
         <link rel="stylesheet", href="gamestyle.css">
     </head>
     <body>
-        <h1>Tab Game</h1>
-        <p>text test 123</p>
-        <hr>
+        <div class="grid-container">
+
+  <div class="main-content">
+    <!-- Header oben: Login links, Überschrift rechts -->
+    <div class="top-bar">
+      <div class="login-container">
+        <form>
+          <input type="text" placeholder="Username">
+          <input type="password" placeholder="Password">
+          <button>Login</button>
+        </form>
+      </div>
+      <h1>Tab Game</h1>
+    </div>
+
+    <!-- Horizontale Linie -->
+    <hr class="divider">
+
+    <!-- Felder verschiedener Größe -->
+    <div class="fields-container">
+      <div class="field small">Klein</div>
+      <div class="field large">Groß</div>
+      <div class="field medium">Mittel</div>
+      <!-- weitere Felder... -->
+    </div>
+
+    <!-- Dropdown-Menü -->
+    <div class="dropdown-menu">
+      <button>Dropdown</button>
+      <div class="dropdown-content">
+        <a href="#">Link 1</a>
+        <a href="#">Link 2</a>
+      </div>
+    </div>
+  </div>
+
+        <aside class="sidebar">
+    <ul>
+      <li>Home</li>
+      <li>About</li>
+      <li>Contact</li>
+    </ul>
+  </aside>
+
+</div>
+
     </body>
 </html>

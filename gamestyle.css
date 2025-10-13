@@ -4,16 +4,121 @@ body{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 150%;
     margin: 20px;
+    height: 100vh;
 }
 
 h1 {
-    color: rgb(28, 153, 130);
+    color: rgb(0, 162, 162);
     font-size: 55px;
     font-family:Verdana, Geneva, Tahoma, sans-serif;
     text-align: center;
     text-shadow: 
     1px 1px 0 rgb(149, 209, 198),
     2px 2px 0 rgb(116, 192, 178),
-/*    0 0 20px rgba(193, 224, 218, 0.664)*/
     0 0 60px rgb(255, 255, 255);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 200px; /* Sidebar + Hauptinhalt */
+  grid-template-rows: 1fr;          /* eine Zeile */
+  height: 50vh;
+}
+
+.main-content {
+  padding: 20px;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+/* Header mit Login links + Überschrift rechts */
+.top-bar {
+  display: flex;
+  align-items: center;
+}
+
+.top-bar h1 {
+  margin: 0 auto; /* Überschrift horizontal mittig */
+}
+
+.sidebar {
+  background: #111;
+  padding: 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-left: 2px solid #00eaff;
+}
+
+/* Felder verschiedener Größe */
+.fields-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.field {
+  background: #222;
+  border: 2px solid #00eaff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Horizontale Linie */
+.divider {
+  border: none;
+  border-top: 2px solid #00eaff;
+  margin: 20px 0;
+}
+
+/* Dropdown */
+.dropdown-menu {
+  position: sticky;
+  top: 0;
+  background: #111;
+  margin-top: 20px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: #222;
+  min-width: 150px;
+  z-index: 100;
+}
+
+.dropdown-menu:hover .dropdown-content {
+  display: block;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column; /* Stapelt Elemente vertikal */
+  gap: 10px;              /* Abstand zwischen den Feldern */
+}
+
+.login-container input {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #00eaff;
+  background: #111;
+  color: white;
+}
+
+.login-container button {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  background: #00eaff;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background: #00ffff;
+  box-shadow: 0 0 10px #00ffff;
 }
