@@ -39,6 +39,15 @@ h1 {
     background-color: rgb(255, 255, 255);
     margin: 20px auto; 
 }
+
+.rules-line-bottom {
+    border: none;
+    height: 2px;
+    width: 80%;
+    background-color: rgb(255, 255, 255);
+    margin: 20px auto;
+}
+
 .rules-line-alt {
     border: none;
     height: 2px;
@@ -82,6 +91,44 @@ h1 {
 .rules-points ul li:nth-child(even)::marker {
     color: red;
 }
+
+
+details {
+  margin-bottom: -16px;
+}
+
+details[open] {
+  padding-bottom: 12px;
+}
+
+summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+
+summary::before {
+  content: "+"; 
+  color: #F0F0F0;
+  font-size: 16px;
+  margin-right: 6.4px;
+}
+
+details[open] summary::before {
+  content: "-";
+}
+
+summary h3 {
+  display: inline;
+  color: #F0F0F0;
+  transition: color 0.3s;
+}
+
+summary:hover h3 {
+  color: rgb(195, 154, 227);
+}
+
 
 /*ScoreBoard*/
 
