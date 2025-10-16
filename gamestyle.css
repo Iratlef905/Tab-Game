@@ -1,3 +1,7 @@
+@import url('https://fonts.cdnfonts.com/css/myriad-pro');
+@import url('https://fonts.cdnfonts.com/css/edo-sz');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
 body{
     background-color: rgb(0, 0, 0);
     color:rgb(255, 255, 255);
@@ -16,4 +20,155 @@ h1 {
     2px 2px 0 rgb(116, 192, 178),
 /*    0 0 20px rgba(193, 224, 218, 0.664)*/
     0 0 60px rgb(255, 255, 255);
+}
+
+/*RULES*/
+
+.bottom-line {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    background-color: rgb(211, 218, 219);
+    margin-top: 100vh; /* higher number to lower the line */
+}
+
+.rules-line {
+    border: none;
+    height: 2px;
+    width: 80%;
+    background-color: rgb(255, 255, 255);
+    margin: 20px auto; 
+}
+
+.rules-line-bottom {
+    border: none;
+    height: 2px;
+    width: 80%;
+    background-color: rgb(255, 255, 255);
+    margin: 20px auto;
+}
+
+.rules-line-alt {
+    border: none;
+    height: 2px;
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    margin: 20px auto; 
+}
+
+
+.rules-section h2 {
+    font-family: 'Edo Sz', sans-serif; /*??*/
+    font-size: 200%;
+    text-align: left;
+    margin-left: 10%;
+    color: rgb(255, 255, 255);
+}
+
+.rules-section ul {
+    margin-left: 12%;
+}
+
+.rules-points h3{
+    font-family: 'Edo Sz', sans-serif; /*??*/
+    text-align: left;
+    color: #F0F0F0;
+}
+
+.rules-points li{
+    margin-left: -10%;
+    font-family: 'Myriad Pro', sans-serif;
+}
+
+.rules-points ul{
+    list-style-type: disc;
+}
+
+.rules-points ul li:nth-child(odd)::marker {
+    color: rgb(49,83,194);
+}
+
+.rules-points ul li:nth-child(even)::marker {
+    color: red;
+}
+
+
+details {
+  margin-bottom: -16px;
+}
+
+details[open] {
+  padding-bottom: 12px;
+}
+
+summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+
+summary::before {
+  content: "+"; 
+  color: #F0F0F0;
+  font-size: 16px;
+  margin-right: 6.4px;
+}
+
+details[open] summary::before {
+  content: "-";
+}
+
+summary h3 {
+  display: inline;
+  color: #F0F0F0;
+  transition: color 0.3s;
+}
+
+summary:hover h3 {
+  color: rgb(195, 154, 227);
+}
+
+
+/*ScoreBoard*/
+
+.scoreboard {
+    margin-top: 80px;
+    text-align: center;
+}
+
+.scoreboard h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+}
+
+
+.scoreboard table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 60%;
+    font-family: 'Myriad Pro', sans-serif;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.scoreboard th, .scoreboard td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 20px;
+    color: #F0F0F0;
+}
+
+.scoreboard th {
+    background-color: rgb(59, 58, 58);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.scoreboard tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s;
 }
