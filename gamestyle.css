@@ -1,26 +1,134 @@
+/* Import custom fonts from external sources */
 @import url('https://fonts.cdnfonts.com/css/myriad-pro');
 @import url('https://fonts.cdnfonts.com/css/edo-sz');
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
-body{
-    background-color: rgb(0, 0, 0);
-    color:rgb(255, 255, 255);
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 150%;
-    margin: 20px;
+/* Global styles for the whole page */
+body {
+    background-color: rgb(0, 0, 0);           /* Black background for the page */
+    color: rgb(255, 255, 255);                /* Default text color: white */
+    font-family: Arial, Helvetica, sans-serif;  /* Default font family if custom fonts fail */
+    font-size: 150%;                            /* Default text size, 1.5x standard */
+    margin: 20px;                               /* Space around the body content */
+    height: 100vh;                              /* Full viewport height */
 }
 
+/* Main page heading */
 h1 {
-    color: rgb(28, 153, 130);
-    font-size: 55px;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    text-align: center;
-    text-shadow: 
-    1px 1px 0 rgb(149, 209, 198),
-    2px 2px 0 rgb(116, 192, 178),
-/*    0 0 20px rgba(193, 224, 218, 0.664)*/
-    0 0 60px rgb(255, 255, 255);
+    color: rgb(0, 162, 162);                        /* Cyan/teal color for the text */
+    font-size: 55px;                                  /* Large heading size */
+    font-family: Verdana, Geneva, Tahoma, sans-serif; /* Font stack for heading */
+    text-align: center;                               /* Center the heading horizontally */
+    text-shadow:                                      /* Adds a layered glow/3D effect */
+        1px 1px 0 rgb(149, 209, 198),               /* Light shadow offset by 1px */
+        2px 2px 0 rgb(116, 192, 178),               /* Slightly darker shadow offset by 2px */
+        0 0 60px rgb(255, 255, 255);                /* Glow effect around the text */
 }
+
+/* Grid container for main layout: main content + sidebar */
+.grid-container {
+  display: grid;                          /* Use CSS Grid layout */
+  grid-template-columns: 1fr 200px;       /* First column flexible (main content), second column fixed 200px (sidebar) */
+  grid-template-rows: 1fr;                /* Single row, height determined by content */
+}
+
+/* Main content section inside the grid */
+.main-content {
+  padding: 20px;                          /* Space inside the main content container */
+}
+
+/* Top bar at the top: Login form on the left, heading on the right */
+.top-bar {
+  display: flex;           /* Use flexbox to arrange children horizontally */
+  align-items: center;     /* Vertically center items within the top bar */
+  height: 15dvh;           /* Height of the top bar: 15% of dynamic viewport height */
+}
+
+/* Style the main heading inside the top bar */
+.top-bar h1 {
+  margin: 0 auto;          /* Horizontally center the heading within the top bar */
+}
+
+/* Sidebar styling */
+.sidebar {
+  background: #111;         /* Dark background for sidebar */
+  padding: 20px;              /* Space inside the sidebar */
+  position: sticky;           /* Sidebar sticks to top while scrolling */
+  top: 0;                     /* Stick at the very top of the viewport */
+  height: 100dvh;             /* Full dynamic viewport height */
+  overflow-y: auto;           /* Enable vertical scroll if content overflows */
+  border-left: 2px solid #00eaff; /* Cyan border on the left as visual accent */
+}
+
+/* Container for various fields (e.g., board, dice, messages) */
+.fields-container {
+  display: grid;                        /* Use CSS Grid for layout */
+  grid-template-columns: 2fr 1fr;       /* Two columns: first takes 2 parts, second 1 part */
+  grid-template-rows: 5fr 1fr;          /* Two rows: first 5 parts, second 1 part */
+  height: 70dvh;                        /* Container height: 70% of dynamic viewport height */
+  gap: 20px;                            /* Gap between rows and columns */
+  margin-top: 20px;                     /* Space above the container */
+}
+
+/* Individual field styling */
+.field {
+  background: #222;                   /* Dark gray background for each field */
+  border: 2px solid #00eaff;          /* Cyan border around each field */
+  padding: 20px;                        /* Space inside the field */
+  border-radius: 8px;                   /* Rounded corners for modern look */
+  text-align: center;                   /* Center content horizontally */
+}
+
+/* Specific styling for the message field to span multiple columns */
+.field.message {
+  grid-column: span 2;   /* This field takes up 2 columns in the grid */
+}
+
+/* Horizontal divider line */
+.divider {
+  border: none;                     /* Remove all default borders */
+  border-top: 2px solid #00eaff;  /* Top border only, 2px cyan line */
+  margin: 20px 0;                   /* Space above and below the line */
+}
+
+/* Login container: form layout */
+.login-container form {
+  display: flex;                  /* Use flexbox for form layout */
+  flex-direction: column;         /* Stack inputs and button vertically */
+  gap: 10px;                      /* Space between each input/button */
+}
+
+/* Styling for input fields inside the login form */
+.login-container input {
+  font-size: 0.7rem;                /* Smaller text inside inputs */
+  padding: 6px 9px;                 /* Inner spacing: top/bottom 6px, left/right 9px */
+  border-radius: 6px;               /* Rounded corners */
+  border: 1px solid #00eaff;      /* Cyan border */
+  background: #111;               /* Dark background */
+  color: white;                   /* White text */
+}
+
+/* Styling for login button */
+.login-container button {
+  font-size: 0.7rem;              /* Smaller text for compact button */
+  padding: 6px;                   /* Inner spacing for button */
+  border-radius: 6px;             /* Rounded corners */
+  border: none;                   /* Remove default border */
+  background: #00eaff;          /* Cyan button background */
+  color: black;                 /* Black text */
+  font-weight: bold;              /* Bold text for emphasis */
+  cursor: pointer;                /* Pointer cursor on hover */
+}
+
+/* Hover effect for login button */
+.login-container button:hover {
+  background: #00ffff;           /* Change button background to lighter cyan on hover */
+  box-shadow: 0 0 10px #00ffff;  /* Add glowing shadow effect */
+}
+
+
+
+
 
 /*RULES*/
 
@@ -63,6 +171,23 @@ h1 {
     text-align: left;
     margin-left: 10%;
     color: rgb(255, 255, 255);
+}
+
+.rules-section summary h2::before {
+  content: "+ ";
+}
+
+.rules-section details[open] summary h2::before {
+  content: "- ";
+}
+
+.rules-section details summary h3::before {
+  content: "+ ";
+  margin-right: 6px;
+}
+
+.rules-section details[open] > summary h3::before {
+  content: "- ";
 }
 
 .rules-section ul {
@@ -109,15 +234,12 @@ summary {
 
 
 summary::before {
-  content: "+"; 
   color: #F0F0F0;
   font-size: 16px;
   margin-right: 6.4px;
 }
 
-details[open] summary::before {
-  content: "-";
-}
+
 
 summary h3 {
   display: inline;
@@ -126,8 +248,13 @@ summary h3 {
 }
 
 summary:hover h3 {
-  color: rgb(195, 154, 227);
+  color: #67d2dc;
 }
+
+summary:hover h2 {
+  color: #67d2dc;
+}
+
 
 
 /*ScoreBoard*/
@@ -171,4 +298,80 @@ summary:hover h3 {
 .scoreboard tr:hover {
     background-color: rgba(255, 255, 255, 0.1);
     transition: background-color 0.3s;
+}
+
+
+/* Board*/
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.controls label {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.controls input {
+  width: 60px;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid #00eaff;
+  background: #111;
+  color: white;
+}
+
+.controls button {
+  background: #00eaff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background: #00ffff;
+  box-shadow: 0 0 8px #00ffff;
+}
+
+/* Board grid styling */
+.board {
+  display: grid;
+  gap: 6px;
+  justify-content: center;
+  background-color: #000000; 
+  padding: 10px; 
+  border-radius: 12px;
+  border: 8px solid #000000; 
+}
+
+.cell {
+  background-color: #fffbe8;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1); 
+}
+
+.piece {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.blue {
+  background-color: #3a6ff7;
+}
+
+.red {
+  background-color: #e14a4a;
 }
