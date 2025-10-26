@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-
+      // /---------------- BOARD SECTION -------------------\
       // creates values to store references to html elements
       const board = document.getElementById("board");
       const colsInput = document.getElementById("cols");
@@ -88,4 +88,55 @@ document.addEventListener("DOMContentLoaded", () => {
         const colunas = parseInt(colsInput.value) || 9;
         generate_board(colunas);
       });
+
+      // ================== DICE SECTION ==================
+      const rollDiceBtn = document.getElementById("rollDiceBtn");
+      const diceImage = document.getElementById("dice-image");
+      const messageBox = document.getElementById("message-box");
+
+      // function to pull dice
+      function rollWeightedDice() {
+        // define probabilities for each face
+        const probabilities = [0.06, 0.25, 0.38, 0.25, 0.06];
+
+        const random = Math.random();
+        let cumulative = 0;
+
+        for (let i = 0; i < probabilities.length; i++) {
+          cumulative += probabilities[i];
+          if (random < cumulative) return i;
+        }
+        return probabilities.length - 1; // fallback (just in case)
+      }
+
+      rollDiceBtn.addEventListener("click", () => {
+        // pulls random number (weighted)
+        const result = rollWeightedDice(); 
+        // updates image
+        diceImage.src = `images/dice_${result}.png`;
+        
+        // prints messages
+        let message = "";
+        switch (result) {
+          case 0:
+            message = "🎲 It´s a 0, move 6 places. Play again!";
+            break;
+          case 1:
+            message = "🎲 It´s a 1, move 1 place. Play again!";
+            break;
+          case 2:
+            message = "🎲 It´s a 2, move 2 places.";
+            break;
+          case 3:
+            message = "🎲 It´s a 3, move 3 places.";
+            break;
+          case 4:
+            message = "🎲 It´s a 4, move 4 places. Play again!";
+            break;
+        }
+
+        // shows the message
+        messageBox.textContent = message;
+      });
+
     });
