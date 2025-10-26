@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
       function generate_board(colunas = 9, linhas = 4) {
         board.innerHTML = ""; // clears board
         // defines the layout of the board as a grid
-        board.style.gridTemplateColumns = `repeat(${colunas}, 80px)`;
-        board.style.gridTemplateRows = `repeat(${linhas}, 80px)`;
+        board.style.gridTemplateColumns = `repeat(${colunas}, 56px)`;
+        board.style.gridTemplateRows = `repeat(${linhas}, 56px)`;
 
         // runs through the board
         for (let linha = 0; linha < linhas; linha++) {

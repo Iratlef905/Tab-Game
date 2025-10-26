@@ -80,7 +80,7 @@ h1 {
 /* Grid container for main layout: main content + sidebar */
 .grid-container {
   display: grid;                          /* Use CSS Grid layout */
-  grid-template-columns: 1fr 13rem;       /* First column flexible (main content), second column fixed at 13rem (sidebar) */
+  grid-template-columns: 1fr;       /* First column flexible (main content), second column fixed at 13rem (sidebar) */
   grid-template-rows: 1fr;                /* Single row, height determined by content */
 }
 
@@ -103,15 +103,37 @@ h1 {
 
 /* Sidebar styling */
 .sidebar {
-  background: var(--background-color2);   /* Dark background for sidebar */
-  padding: 1.2rem;            /* Space inside the sidebar */
-  position: sticky;           /* Sidebar sticks to top while scrolling */
-  top: 0;                     /* Stick at the very top of the viewport */
-  height: 100vh;              /* Fallback for old Browsers in case dvh is not known */    
-  height: 100dvh;             /* Full dynamic viewport height */
-  overflow-y: auto;           /* Enable vertical scroll if content overflows */
-  border-left: 2px solid var(--seperator-lines);  /* Cyan border on the left as visual accent */
+  background: var(--background-color2);   /* Dark background for the sidebar, color comes from a CSS variable */
+  padding: 1.2rem;                        /* Inner spacing inside the sidebar */
+  position: fixed;                        /* Fixed position to stay visible during scrolling */
+  top: 0;                                 /* Stick at the very top of the viewport */
+  right: -12rem;                          /* Start hidden outside the right edge of the screen (adjust width if needed) */
+  width: 10rem;                            /* Set the sidebar width */
+  height: 100dvh;                          /* Full dynamic viewport height */
+  overflow-y: auto;                        /* Enable vertical scrolling if content overflows */
+  border-left: 2px solid var(--seperator-lines); /* Left border as visual accent */
+  box-shadow: -2px 0 8px rgba(0,0,0,0.3);  /* Slight shadow to separate sidebar from content */
+  transition: right 0.3s ease;            /* Smooth slide-in/out animation */
+  z-index: 1000;                           /* Ensure the sidebar is on top of other elements */
 }
+
+/* Invisible hover zone at the right edge of the screen */
+.hover-zone {
+  content: '';                             /* Empty content */
+  position: fixed;                         /* Fixed to stay in place when scrolling */
+  top: 0;                                  /* Start at top of viewport */
+  right: 0;                                /* Stick to the right edge */
+  width: 50px;                             /* Width of hover-sensitive area */
+  height: 100vh;                           /* Full viewport height */
+  z-index: 999;                            /* Slightly lower than sidebar so hover works */
+}
+
+/* When user hovers over the right edge, show the sidebar */
+.hover-zone:hover + .sidebar,
+.sidebar:hover {
+  right: 0;                                /* Slide the sidebar fully into view */
+}
+
 
 /* Container for various fields (e.g., board, dice, messages) */
 .fields-container {
@@ -366,7 +388,7 @@ summary:hover h2 {
   gap: 6px;
   justify-content: center;
   background-color: #000000; 
-  padding: 10px; 
+  padding: 0px; 
   border-radius: 12px;
   border: 8px solid #000000; 
 }
@@ -377,14 +399,14 @@ summary:hover h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 80px;
-  height: 80px;
+  width: 56px;
+  height: 56px;
   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1); 
 }
 
 .piece {
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
 }
 
