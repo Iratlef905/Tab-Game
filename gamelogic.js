@@ -125,13 +125,13 @@ document.addEventListener("DOMContentLoaded", () => {
             message = "🎲 It´s a 1, move 1 place. Play again!";
             break;
           case 2:
-            message = "🎲 It´s a 2 — move 2 places.";
+            message = "🎲 It´s a 2, move 2 places.";
             break;
           case 3:
-            message = "🎲 It´s a 3 — move 3 places.";
+            message = "🎲 It´s a 3, move 3 places.";
             break;
           case 4:
-            message = "🎲 It´s a 4 — move 4 places. Play again!";
+            message = "🎲 It´s a 4, move 4 places. Play again!";
             break;
         }
 
