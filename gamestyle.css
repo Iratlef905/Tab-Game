@@ -58,23 +58,23 @@
 
 /* Global styles for the whole page */
 body {
-    background-color: var(--background-color);  /* Background for the page */
-    color: var(--text-color);                   /* Default text color */
-    font-family: var(--standard-font);          /* Defenition of font family */
-    font-size: var(--standard-fontsize);        /* Default text size, 1.5x standard */
-    margin: 0rem;                               /* Space around the body content (default would be 8px)*/
+  background-color: var(--background-color);  /* Background for the page */
+  color: var(--text-color);                   /* Default text color */
+  font-family: var(--standard-font);          /* Defenition of font family */
+  font-size: var(--standard-fontsize);        /* Default text size, 1.5x standard */
+  margin: 0rem;                               /* Space around the body content (default would be 8px)*/
 } 
 
 /* Main page heading */
 h1 {
-    color: var(--header-color);                       /* Color for heading */
-    font-size: 4rem;                                  /* Large heading size */
-    font-family: var(--header-font);                  /* Font stack for heading */
-    text-align: center;                               /* Center the heading horizontally */
-    text-shadow:                                      /* Adds a layered glow/3D effect */
-        1px 1px 0 var(--header-3d-effect),            /* Light shadow offset by 1px */
-        2px 2px 0 var(--header-3d-effect),            /* Light shadow offset by 2px */
-        0 0 5rem var(--shadow);                       /* Glow effect around the text */
+  color: var(--header-color);                       /* Color for heading */
+  font-size: 4rem;                                  /* Large heading size */
+  font-family: var(--header-font);                  /* Font stack for heading */
+  text-align: center;                               /* Center the heading horizontally */
+  text-shadow:                                      /* Adds a layered glow/3D effect */
+    1px 1px 0 var(--header-3d-effect),              /* Light shadow offset by 1px */
+    2px 2px 0 var(--header-3d-effect),              /* Light shadow offset by 2px */
+    0 0 5rem var(--shadow);                         /* Glow effect around the text */
 }
 
 /* Grid container for main layout: main content + sidebar */
@@ -208,11 +208,11 @@ h1 {
 /*RULES*/
 
 .rules-section h2 {
-    font-family: 'Edo Sz', sans-serif; /*??*/
-    font-size: 200%;
-    text-align: left;
-    margin-left: 10%;
-    color: rgb(255, 255, 255);
+  font-family: 'Edo Sz', sans-serif; /*??*/
+  font-size: 200%;
+  text-align: left;
+  margin-left: 10%;
+  color: rgb(255, 255, 255);
 }
 
 .rules-section summary h2::before {
@@ -237,26 +237,26 @@ h1 {
 }
 
 .rules-points h3{
-    font-family: 'Edo Sz', sans-serif; /*??*/
-    text-align: left;
-    color: #F0F0F0;
+  font-family: 'Edo Sz', sans-serif; /*??*/
+  text-align: left;
+  color: #F0F0F0;
 }
 
 .rules-points li{
-    margin-left: -10%;
-    font-family: 'Myriad Pro', sans-serif;
+  margin-left: -10%;
+  font-family: 'Myriad Pro', sans-serif;
 }
 
 .rules-points ul{
-    list-style-type: disc;
+  list-style-type: disc;
 }
 
 .rules-points ul li:nth-child(odd)::marker {
-    color: rgb(49,83,194);
+  color: rgb(49,83,194);
 }
 
 .rules-points ul li:nth-child(even)::marker {
-    color: red;
+  color: red;
 }
 
 
@@ -302,44 +302,44 @@ summary:hover h2 {
 /*ScoreBoard*/
 
 .scoreboard {
-    margin-top: 80px;
-    text-align: center;
+  margin-top: 80px;
+  text-align: center;
 }
 
 .scoreboard h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 2px;
-    color: rgb(255, 255, 255);
-    margin-bottom: 20px;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 2px;
+  color: rgb(255, 255, 255);
+  margin-bottom: 20px;
 }
 
 
 .scoreboard table {
-    margin: 0 auto;
-    border-collapse: collapse;
-    width: 60%;
-    font-family: 'Myriad Pro', sans-serif;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  margin: 0 auto;
+  border-collapse: collapse;
+  width: 60%;
+  font-family: 'Myriad Pro', sans-serif;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
 .scoreboard th, .scoreboard td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 12px 20px;
-    color: #F0F0F0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 20px;
+  color: #F0F0F0;
 }
 
 .scoreboard th {
-    background-color: rgb(59, 58, 58);
-    font-weight: bold;
-    letter-spacing: 1px;
+  background-color: rgb(59, 58, 58);
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .scoreboard tr:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transition: background-color 0.3s;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s;
 }
 
 
