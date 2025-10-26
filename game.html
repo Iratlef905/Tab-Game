@@ -12,6 +12,9 @@
 
         <!-- Link to external CSS file for styling the game layout -->
         <link rel="stylesheet", href="gamestyle.css">
+
+        <!-- Link to external JS file for the Game Logic-->
+        <script src = "gamelogic.js" defer></script>
     </head>
 
     <body>
@@ -49,7 +52,14 @@
                 <div class="fields-container">
 
                     <!-- Single field representing the game board -->
-                    <div class="field">Board</div>
+                    <div class="field">
+                        <div class="controls">
+                            <label for="cols">Number of Columns:</label>
+                            <input type="number" id="cols" min="7" max="15" value="9" step="2">
+                            <button id="resetBtn">Reset Board</button>
+                        </div>
+                        <div class="board" id="board"></div>
+                    </div>
 
                     <!-- Field representing dice -->
                     <div class="field">Dice</div>
@@ -122,45 +132,41 @@
                 </div>
                 <hr class="divider">
 
+        <hr class="divider">
 
-                <!--Scoreboard-->
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+          <h2>Scoreboard</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Best Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Player 1</td>
+                <td>??</td>
+              </tr>
+              <tr>
+                <td>Player 2</td>
+                <td>??</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-                <div class="scoreboard">
-                <h2>Scoreboard</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Player</th>
-                            <th>Best Result</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Player 1</td>
-                            <td>??</td>
-                        </tr>
-                        <tr>
-                            <td>Player 2</td>
-                            <td>??</td>
-                        </tr>
-                    </tbody>
-                </table>
-                </div>
-            </div>
-
-            <!-- Sidebar section, on the right of the main content -->
-            <aside class="sidebar">
-
-                <!-- Unordered list for sidebar navigation or links -->
-                <ul>
-                    <!--Filling content, must be replaced by actual content and links-->
-                    <li>Sidebar</li>
-                    <li>Settings</li>
-                    <li>link rules</li>
-                    <li>link score</li>
-                </ul>
-            </aside>
-            
-        </div>  <!-- End of .grid-container -->
-    </body>
+      <div class="hover-zone"></div>
+      <aside class="sidebar">
+        <ul>
+          <li>Sidebar</li>
+          <li>Settings</li>
+          <li>link rules</li>
+          <li>link score</li>
+        </ul>
+      </aside>
+    </div>
+  </body>
 </html>
