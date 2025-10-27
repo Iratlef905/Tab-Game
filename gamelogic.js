@@ -4,30 +4,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Link HTML elements to JS variables
     const board = document.getElementById("board");   // Container for board cells
-    const colsInput = document.getElementById("cols"); // Input to set number of columns
-    const resetBtn = document.getElementById("resetBtn"); // Button to reset the board
 
     // Function to generate the game board dynamically
-    function generate_board(colunas = 9, linhas = 4) {
+    function generate_board(columns = 9, rows = 4) {
         board.innerHTML = ""; // Clear existing board content
 
         // Set up the grid layout for the board
-        board.style.gridTemplateColumns = `repeat(${colunas}, 56px)`; // Column width fixed to 56px
-        board.style.gridTemplateRows = `repeat(${linhas}, 56px)`;    // Row height fixed to 56px
+        board.style.gridTemplateColumns = `repeat(${columns}, 56px)`; // Column width fixed to 56px
+        board.style.gridTemplateRows = `repeat(${rows}, 56px)`;       // Row height fixed to 56px
 
         // Create cells and populate pieces
-        for (let linha = 0; linha < linhas; linha++) {
-            for (let coluna = 0; coluna < colunas; coluna++) {
-                const cell = document.createElement("div");   // Create a div for each cell
+        for (let line = 0; line < rows; line++) {
+            for (let row = 0; row < columns; row++) {
+                const cell = document.createElement("div");    // Create a div for each cell
                 cell.classList.add("cell");                    // Assign "cell" CSS class
 
                 // Place initial pieces: red on top row, blue on bottom row
-                if (linha === 0) {
+                if (line === 0) {
                     const piece = document.createElement("div");
                     piece.classList.add("piece", "red");      // Red piece
                     piece.draggable = true;                   // Make draggable
                     cell.appendChild(piece);                  // Add to cell
-                } else if (linha === linhas - 1) {
+                } else if (line === rows - 1) {
                     const piece = document.createElement("div");
                     piece.classList.add("piece", "blue");     // Blue piece
                     piece.draggable = true;                   // Make draggable
@@ -60,27 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     generate_board(); // Generate the initial board on page load
 
-    // Update board when column input changes
-    colsInput.addEventListener("input", (e) => {
-        let colunas = parseInt(e.target.value) || 9;
-
-        if (colunas % 2 === 0) {     // Ensure number of columns is odd
-            colunas += 1;
-            e.target.value = colunas; // Update input to reflect adjustment
-        }
-
-        // Limit number of columns between 7 and 15
-        if (colunas < 7) colunas = 7;
-        if (colunas > 15) colunas = 15;
-
-        generate_board(colunas);      // Regenerate board with new column count
-    });
-
-    // Reset board to current input value when reset button is clicked
-    resetBtn.addEventListener("click", () => {
-        const colunas = parseInt(colsInput.value) || 9;
-        generate_board(colunas);
-    });
 
 // ================== SETTINGS SECTION ==================
 

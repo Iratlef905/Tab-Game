@@ -196,9 +196,9 @@ h1 {
     /* Two columns: first takes 2 parts, second 1 part */
     grid-template-rows: 1fr;
     /* One Row */
-    height: 90vh;
+    height: 70vh;
     /* Fallback for old Browsers in case dvh is not known */
-    height: 90dvh;
+    height: 70dvh;
     /* Container height: 70% of dynamic viewport(screen) height */
     gap: 1.2rem;
     /* Gap between rows and columns */
