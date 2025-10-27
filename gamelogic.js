@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    
+
     // /---------------- BOARD SECTION -------------------\
     // creates values to store references to html elements
     const board = document.getElementById("board");
@@ -112,10 +112,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     rollDiceBtn.addEventListener("click", () => {
         // pulls random number (weighted)
-        const result = rollWeightedDice(); 
+        const result = rollWeightedDice();
         // updates image
         diceImage.src = `images/dice_${result}.png`;
-        
+
         // prints messages
         let message = "";
         switch (result) {
@@ -140,4 +140,38 @@ document.addEventListener("DOMContentLoaded", () => {
         messageBox.textContent = message;
     });
 
+    // ================== NEW GAME LOGIC==================
+    const startGameBtn = document.getElementById("startGameBtn");
+    const opponentSelect = document.getElementById("opponentSelect");
+    const difficultySelect = document.getElementById("difficultySelect");
+    const columnsSelect = document.getElementById("columnsSelect");
+
+    opponentSelect.addEventListener("change", () => {
+        if (opponentSelect.value === "computer") {
+            difficultySelect.disabled = false;
+        } else {
+            difficultySelect.disabled = true;
+        }
+
+    });
+    startGameBtn.addEventListener("click", () => {
+        const opponent = opponentSelect.value;
+        const difficulty = difficultySelect.value;
+        const columns = parseInt(columnsSelect.value);
+
+        isComputerOpponent = opponent === "computer";
+        currentTurn = "red"; // red always starts
+
+        generate_board(columns);
+        const messageBox = document.getElementById("message-box");
+        messageBox.textContent = `New game started against ${opponent}${opponent === "computer" ? " (" + difficulty + " difficulty)" : ""} on a ${columns}-column board. Good luck!`;
+
+        if (isComputerOpponent) {
+            setupPlayerVsComputer(difficulty);
+        } else {
+            setupPlayerVsPlayer();
+        }
+    });
+
+    // ================== AI LOGIC==================
 });
