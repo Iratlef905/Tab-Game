@@ -77,16 +77,10 @@ h1 {
     0 0 5rem var(--shadow);                         /* Glow effect around the text */
 }
 
-/* Grid container for main layout: main content + sidebar */
-.grid-container {
-  display: grid;                          /* Use CSS Grid layout */
-  grid-template-columns: 1fr;       /* First column flexible (main content), second column fixed at 13rem (sidebar) */
-  grid-template-rows: 1fr;                /* Single row, height determined by content */
-}
 
 /* Main content section inside the grid */
 .main-content {
-  padding: 1.2rem;                          /* Space inside the main content container */
+  padding: 1.2rem;                  /* Space inside the main content container */
 }
 
 /* Top bar at the top: Login form on the left, heading on the right */
@@ -139,7 +133,7 @@ h1 {
 .fields-container {
   display: grid;                        /* Use CSS Grid for layout */
   grid-template-columns: 2fr 1fr;       /* Two columns: first takes 2 parts, second 1 part */
-  grid-template-rows: 5fr 1fr;          /* Two rows: first 5 parts, second 1 part */
+  grid-template-rows: 1fr;              /* One Row */
   height: 90vh;                         /* Fallback for old Browsers in case dvh is not known */
   height: 90dvh;                        /* Container height: 70% of dynamic viewport(screen) height */
   gap: 1.2rem;                          /* Gap between rows and columns */
@@ -147,7 +141,7 @@ h1 {
 }
 
 /* Individual field styling */
-.field {
+.field.message {
   background: var(--background-color2);   /* Dark gray background for each field */
   border: 2px solid var(--border-color);  /* Cyan border around each field */
   padding: 1.2rem;                        /* Space inside the field */
@@ -155,9 +149,12 @@ h1 {
   text-align: center;                     /* Center content horizontally */
 }
 
-/* Specific styling for the message field to span multiple columns */
-.field.message {
-  grid-column: span 2;   /* This field takes up 2 columns in the grid */
+/* Specific styling for the board Field to be able to also contain the messages field and the Setting */
+.field.board {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 3fr 1fr;
+  gap: 0 rem;
 }
 
 /* Horizontal divider line */
@@ -201,8 +198,6 @@ h1 {
   background: var(--hover-color);           /* Change button background to lighter cyan on hover */
   box-shadow: 0 0 0.8rem var(--shadow);     /* Add glowing shadow effect */
 }
-
-
 
 
 /*RULES*/
@@ -362,24 +357,24 @@ summary:hover h2 {
   width: 60px;
   text-align: center;
   border-radius: 6px;
-  border: 1px solid #00eaff;
-  background: #111;
-  color: white;
+  border: 1px solid var(--border-color);
+  background: var(--background-color2);
+  color: var(--text-color);
 }
 
 .controls button {
-  background: #00eaff;
+  background: var(--button-color);
   border: none;
   border-radius: 6px;
   padding: 4px 8px;
-  color: #000;
+  color: var(--text-color2);
   font-weight: bold;
   cursor: pointer;
 }
 
 .controls button:hover {
-  background: #00ffff;
-  box-shadow: 0 0 8px #00ffff;
+  background: var(--hover-color);
+  box-shadow: 0 0 8px var(--shadow);
 }
 
 /* Board grid styling */
@@ -443,16 +438,16 @@ summary:hover h2 {
 
 /* Roll dice button */
 #rollDiceBtn {
-  background: #00eaff;
+  background: var(--button-color);
   border: none;
   border-radius: 6px;
   padding: 4px 8px;
-  color: #000;
+  color: var(--text-color2);
   font-weight: bold;
   cursor: pointer;
 }
 
 #rollDiceBtn:hover {
-  background: #00ffff;
-  box-shadow: 0 0 8px #00ffff;
+  background: var(--hover-color);
+  box-shadow: 0 0 8px var(--shadow);
 }

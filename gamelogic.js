@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    
     // /---------------- BOARD SECTION -------------------\
     // creates values to store references to html elements
     const board = document.getElementById("board");
