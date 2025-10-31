@@ -474,6 +474,13 @@ summary:hover h2 {
 }
 
 /* Board grid styling */
+.board-container {
+    display: flex;              /* Flexbox für Zentrierung */
+    justify-content: center;    /* horizontal zentrieren */
+    align-items: center;        /* vertikal zentrieren */
+    height: 100%;               /* optional, Höhe des Containers */
+}
+
 .board {
     display: grid;
     gap: 6px;
@@ -482,6 +489,11 @@ summary:hover h2 {
     padding: 0px;
     border-radius: 12px;
     border: 8px solid #000000;
+}
+
+.board.flipped {
+  transform: rotate(180deg);
+  transform-origin: center;
 }
 
 .cell {
@@ -493,6 +505,11 @@ summary:hover h2 {
     width: 56px;
     height: 56px;
     box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.cell.highlight {
+    border: 3px solid yellow;
+    box-shadow: 0 0 10px yellow;
 }
 
 .piece {
