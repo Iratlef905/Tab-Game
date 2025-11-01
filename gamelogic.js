@@ -1,150 +1,158 @@
+// === Class representing a single game piece (red or blue) ===
 class Piece {
-    constructor(color){
-        this.color = color;
-        this.moved = false;
-        this.isLastRow = false;
-        this.domElement = document.createElement("div");
-        this.domElement.classList.add("piece", this.color);
-    }
- 
-    firstmove(){
-        this.moved = true;
+    constructor(color) {
+        this.color = color;                               // Stores the color of the piece ("red" or "blue")
+        this.moved = false;                               // Tracks whether the piece has moved yet
+        this.isLastRow = false;                           // Indicates if the piece has reached the final row
+        this.domElement = document.createElement("div");  // Creates the visual DOM element for the piece
+        this.domElement.classList.add("piece", this.color); // Applies base "piece" class and color-specific styling
     }
 
-    reachedLastRow(){
-        this.isLastRow = true;
+    // === Marks that the piece has made its first move ===
+    firstmove() {
+        this.moved = true;                                // Updates the state to indicate movement
     }
 
-    animate(cell){
-        cell.appendChild(this.domElement);
+    // === Marks that the piece has reached the last row ===
+    reachedLastRow() {
+        this.isLastRow = true;                            // Updates the state to indicate the final position
     }
 
-    setClickHandler(callback){
-        this.domElement.onclick = () => callback(this);
+    // === Moves or places the piece visually on the board ===
+    animate(cell) {
+        cell.appendChild(this.domElement);                 // Adds the piece’s DOM element to the given cell
+    }
+
+    // === Attaches a click handler for user interaction ===
+    setClickHandler(callback) {
+        this.domElement.onclick = () => callback(this);    // Calls the provided callback when the piece is clicked
     }
 }
 
+// === Class representing the game board and its pieces ===
 class Board {
+    // === Initializes the board with given columns and starting player color ===
     constructor(columns, playerColor) {
-        this.boardElement = document.getElementById("board");
-        this.columns = columns;
-        this.rows = 4;
-        this.currentPlayer = playerColor;
-        this.cells = Array.from({ length: this.rows }, () => Array(columns).fill(null));
-        this.pieces = new Array(columns * this.rows).fill(null);
+        this.boardElement = document.getElementById("board");       // DOM element containing the board
+        this.columns = columns;                                     // Number of columns on the board
+        this.rows = 4;                                              // Fixed number of rows
+        this.currentPlayer = playerColor;                           // Tracks which player's turn it is
+        this.cells = Array.from({ length: this.rows }, () => Array(columns).fill(null)); // 2D array of board cells
+        this.pieces = new Array(columns * this.rows).fill(null);    // 1D array tracking all pieces on board
 
-        this.showBoard();
+        this.showBoard();                                           // Render initial board
     }
 
+    // === Resets and creates a new board with the given configuration ===
     newBoard(columns, playerColor){
-        this.boardElement.innerHTML = "";
-        this.columns = columns;
-        this.rows = 4;
-        this.currentPlayer = playerColor;
-        this.cells = Array.from({ length: this.rows }, () => Array(columns).fill(null));
-        this.pieces = new Array(columns * this.rows).fill(null);
+        this.boardElement.innerHTML = "";                            // Clear any existing cells
+        this.columns = columns;                                      // Set new number of columns
+        this.rows = 4;                                               // Reset fixed number of rows
+        this.currentPlayer = playerColor;                            // Set starting player
+        this.cells = Array.from({ length: this.rows }, () => Array(columns).fill(null)); // Reset cell array
+        this.pieces = new Array(columns * this.rows).fill(null);     // Reset pieces array
 
-        this.showBoard();
+        this.showBoard();                                            // Render new board
     }
 
+    // === Generates the board cells and initial pieces ===
     showBoard(){
-        this.boardElement.style.gridTemplateColumns = `repeat(${this.columns}, 56px)`;
-        this.boardElement.style.gridTemplateRows = `repeat(${this.rows}, 56px)`;
+        this.boardElement.style.gridTemplateColumns = `repeat(${this.columns}, 56px)`; // Set column grid
+        this.boardElement.style.gridTemplateRows = `repeat(${this.rows}, 56px)`;       // Set row grid
         
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.columns; col++) {
-                let cell = document.createElement("div");
-                cell.classList.add("cell");
-                this.boardElement.appendChild(cell);
-                this.cells[row][col] = cell;
+                let cell = document.createElement("div");             // Create a cell div
+                cell.classList.add("cell");                          // Add "cell" styling class
+                this.boardElement.appendChild(cell);                 // Append cell to board container
+                this.cells[row][col] = cell;                         // Store cell reference
 
+                // Place red pieces on top row
                 if (row === 0){
-                    let piece = new Piece("red");
-                //    piece.animate(cell);
-                    this.pieces[row * this.columns + col] = piece;
+                    let piece = new Piece("red");                    // Create red piece
+                    this.pieces[row * this.columns + col] = piece;   // Store piece in array
                 }
+                // Place blue pieces on bottom row
                 else if (row === this.rows - 1){
-                    let piece = new Piece("blue");
-                //    piece.animate(cell);
-                    this.pieces[row * this.columns + col] = piece;
+                    let piece = new Piece("blue");                   // Create blue piece
+                    this.pieces[row * this.columns + col] = piece;   // Store piece in array
                 }
             }
         }
-        this.showPieces();
+        this.showPieces();                                           // Render all pieces on the board
     }
 
+    // === Renders all pieces onto their corresponding cells ===
     showPieces() {
-        // remove existing pieces from cells first to avoid duplicates
+        // Remove existing pieces from cells first to avoid duplicates
         this.boardElement.querySelectorAll('.piece').forEach(p => p.remove());
 
         for (let idx = 0; idx < this.pieces.length; idx++) {
-            const piece = this.pieces[idx];
-            if (!piece) continue;
+            const piece = this.pieces[idx];                          // Get the piece at this index
+            if (!piece) continue;                                    // Skip if no piece
 
-            const row = Math.floor(idx / this.columns);
-            const col = idx % this.columns;
-            const cell = this.cells[row][col];
-            piece.animate(cell);
+            const row = Math.floor(idx / this.columns);              // Calculate row position
+            const col = idx % this.columns;                          // Calculate column position
+            const cell = this.cells[row][col];                       // Get corresponding cell
+            piece.animate(cell);                                     // Place piece DOM element in cell
         }
     }
 
+    // === Displays a message to the player in the message box ===
     showMessage(text){
-        const messageBox = document.getElementById("message-box");
-        messageBox.textContent = text;
+        const messageBox = document.getElementById("message-box");   // Get message box element
+        messageBox.textContent = text;                               // Update displayed message
     }
 }
 
-// ================== DICE CLASS ==================
+// === Class representing a weighted dice with UI integration ===
 class Dice {
+    // === Initializes Dice with roll button, dice image, message box, and callback ===
     constructor(onRoll) {
-        // Verbinde HTML-Elemente mit der Klasse
-        this.rollButton = document.getElementById("rollDiceBtn");
-        this.diceImage = document.getElementById("dice-image");
-        this.messageBox = document.getElementById("message-box");
+        this.rollButton = document.getElementById("rollDiceBtn"); // Button to roll the dice
+        this.diceImage = document.getElementById("dice-image");   // Image element to show dice face
+        this.messageBox = document.getElementById("message-box"); // Message box for feedback
 
-
-        // Das Ergebnis des letzten Wurfs
-        this.result = null;
-
-        this.onRoll = onRoll;
+        this.result = null;                                      // Stores last dice result
+        this.onRoll = onRoll;                                    // Callback to execute after rolling
 
         if (this.rollButton) {
-            this.rollButton.addEventListener("click", () => this.rollDice());
+            this.rollButton.addEventListener("click", () => this.rollDice()); // Attach click listener
         }
     }
 
-    // === Würfelfunktion mit Wahrscheinlichkeitsverteilung ===
+    // === Rolls the dice according to a weighted probability distribution ===
     rollWeightedDice() {
-        const probabilities = [0.06, 0.25, 0.38, 0.25, 0.06]; // Wahrscheinlichkeit für 0–4
-        const random = Math.random();
+        const probabilities = [0.06, 0.25, 0.38, 0.25, 0.06];  // Probabilities for 0–4
+        const random = Math.random();                           // Random number between 0 and 1
         let cumulative = 0;
 
         for (let i = 0; i < probabilities.length; i++) {
-            cumulative += probabilities[i];
-            if (random < cumulative) return i;
+            cumulative += probabilities[i];                     // Accumulate probabilities
+            if (random < cumulative) return i;                  // Return value when random fits interval
         }
-        return probabilities.length - 1;
+        return probabilities.length - 1;                        // Fallback: return last index
     }
 
-    // === Hauptmethode: Würfeln + Anzeige aktualisieren ===
+    // === Rolls dice, updates image and message, and triggers callback ===
     rollDice() {
-        this.result = this.rollWeightedDice(); // speichere das Ergebnis
-        this.updateDiceImage();
-        this.message();
+        this.result = this.rollWeightedDice();                 // Get weighted result
+        this.updateDiceImage();                                 // Update dice face in UI
+        this.message();                                         // Show message in UI
 
-        let steps = this.result === 0 ? 6 : this.result;
+        let steps = this.result === 0 ? 6 : this.result;       // Treat 0 as 6 for movement
 
-        if (this.onRoll) this.onRoll(steps);
+        if (this.onRoll) this.onRoll(steps);                  // Call game callback with steps
     }
 
-    // === Hilfsmethode: Bild entsprechend Ergebnis ändern ===
+    // === Updates the dice image to match the last result ===
     updateDiceImage() {
         if (this.diceImage) {
-            this.diceImage.src = `images/dice_${this.result}.png`;
+            this.diceImage.src = `images/dice_${this.result}.png`; // Set dice image source
         }
     }
 
-    // === Hilfsmethode: Nachricht im UI anzeigen ===
+    // === Displays a message in the UI depending on dice result ===
     message() {
         if (!this.messageBox) return;
 
@@ -157,245 +165,202 @@ class Dice {
             case 4: message = "🎲 It’s a 4, move 4 places. Play again!"; break;
         }
 
-        this.messageBox.textContent = message;
+        this.messageBox.textContent = message;               // Update message box text
     }
 }
 
-
+// === Class representing the game logic and turn management ===
 class Game {
+    // === Initializes the game with a board, dice, and starting player ===
     constructor(rows, playerColor){
-        this.board = new Board(rows, playerColor);
-        this.dice = new Dice((result) => this.onDiceRolled(result));
-        this.diceResult = null;
-        this.extraMove = false; // für Würfe 0,1,4
-        this.board.showMessage(`${this.board.currentPlayer} starts! Roll the dice.`);
+        this.board = new Board(rows, playerColor);                     // Create a new Board instance
+        this.dice = new Dice((result) => this.onDiceRolled(result));   // Create Dice instance with callback
+        this.diceResult = null;                                        // Store result of last dice roll
+        this.extraMove = false;                                        // Tracks if player can roll again
+        this.board.showMessage(`${this.board.currentPlayer} starts! Roll the dice.`); // Initial message
     }
 
-    // === Würfelergebnis erhalten ===
+    // === Handles dice result and determines if extra move is allowed ===
     onDiceRolled(result) {
-        this.diceResult = result;
+        this.diceResult = result;                                      // Save dice result
 
         if (result === 1 || result === 4 || result === 6) {
-            this.extraMove = true; // Spieler darf weiterspielen
+            this.extraMove = true;                                     // Player gets an extra move
             this.board.showMessage(`${this.board.currentPlayer} rolled ${result}. Move a piece and then roll again!`);
         } else if (result === 2 || result === 3) {
-            this.extraMove = false; // Zug endet nach dem nächsten Move
+            this.extraMove = false;                                    // Turn ends after next move
             this.board.showMessage(`${this.board.currentPlayer} rolled ${result}. Move a piece, then turn ends.`);
         }
 
-        this.enablePieceClicks();
+        this.enablePieceClicks();                                       // Activate clickable pieces for this turn
     }
 
-    // === Aktivieren der Pieces für Klicks ===
+    // === Makes all pieces clickable and sets click callback ===
     enablePieceClicks() {
         this.board.pieces.forEach(piece => {
             if (piece) {
-                piece.setClickHandler((clickedPiece) => this.onPieceClicked(clickedPiece));
+                piece.setClickHandler((clickedPiece) => this.onPieceClicked(clickedPiece)); // Attach handler
             }
         });
     }
 
-    // === Deaktivieren der Pieces ===
+    // === Disables clicks on all pieces to prevent interaction ===
     disablePieceClicks() {
         this.board.pieces.forEach(piece => {
-            if(piece) piece.domElement.onclick = null;
+            if(piece) piece.domElement.onclick = null;                // Remove onclick handler
         });
     }
 
-    // === Aufruf beim Klick auf ein Piece ===
+    // === Triggered when a piece is clicked; handles movement, capturing, and turn logic ===
     async onPieceClicked(piece) {
-        if (piece.color !== this.board.currentPlayer) {
+        if (piece.color !== this.board.currentPlayer) {              // Check piece belongs to current player
             this.board.showMessage("You can't move pieces of the opponent!");
             return;
         }
 
-        if (this.diceResult === null) {
+        if (this.diceResult === null) {                              // Ensure dice has been rolled
             this.board.showMessage("Roll the dice first!");
             return;
         }
 
-        let destination = this.getDestination(piece);
+        let destination = this.getDestination(piece);                // Calculate target cell index
 
-        const targetPiece = this.board.pieces[destination];
+        const targetPiece = this.board.pieces[destination];          // Check if target cell is occupied
         if (targetPiece && targetPiece.color !== this.board.currentPlayer) {
-            targetPiece.domElement.remove();
+            targetPiece.domElement.remove();                         // Remove opponent piece
         } else if (targetPiece && targetPiece.color === this.board.currentPlayer) {
             this.board.showMessage("You can't move onto your own piece!");
             return;
         }
 
-        const choices = this.decidingPoint(piece);
+        const choices = this.decidingPoint(piece);                   // Check if piece is at a decision point
 
         if (choices) {
-            
+            // Highlight possible cells and wait for player click
             choices.forEach(idx => {
                 const cell = this.board.cells[Math.floor(idx / this.board.columns)][idx % this.board.columns];
                 cell.classList.add("highlight");
                 cell.onclick = () => {
-                    this.disableHighlights();
-                    this.movePieceForward(piece, idx);
+                    this.disableHighlights();                       // Clear highlights after choice
+                    this.movePieceForward(piece, idx);              // Move piece to chosen cell
                 };
             });
         } else {
-            this.movePieceForward(piece, destination);
+            this.movePieceForward(piece, destination);               // Move piece normally
         }
 
-        this.disablePieceClicks();
+        this.disablePieceClicks();                                   // Disable further clicks until next turn
 
-        if (!this.checkWinCondition()) return;
+        if (!this.checkWinCondition()) return;                       // Check if the game is over
 
-        // Zugende oder weiterspielen
+        // Determine if turn ends or player rolls again
         if (this.diceResult === 2 || this.diceResult === 3) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Small pause before switching turn
             this.switchTurn();
             this.diceResult = null;
             this.board.showMessage(`${this.board.currentPlayer}'s turn! Roll the dice.`);
         } else if (this.extraMove) {
-            this.diceResult = null; // für neuen Wurf
+            this.diceResult = null;                                   // Reset dice for extra move
             this.board.showMessage(`${this.board.currentPlayer} can roll again!`);
         }
     }
 
+    // === Determines if a piece is at a decision point and returns alternative destinations ===
     decidingPoint(piece) {
-        // Aktuellen Index des Pieces im Array finden
-        const index = this.board.pieces.indexOf(piece);
+        const index = this.board.pieces.indexOf(piece);             // Find the piece's index
         if (index === -1) return null;
 
-        const row = Math.floor(index / this.board.columns);
+        const row = Math.floor(index / this.board.columns);         // Compute current row
+        const destination = this.getDestination(piece);             // Compute normal destination
 
-        // Normale Destination über getDestination berechnen (du musst getDestination übergeben oder Board kennt steps)
-        const destination = this.getDestination(piece);
-
-
-        // --- Blau Entscheidungslogik ---
-        // Blau: Entscheidung am Übergang von Reihe 1 nach 0
+        // --- Blue decision logic: from row 1 to 0, give two possible destinations ---
         if (piece.color === "blue" && row === 1 && Math.floor(destination / this.board.columns) === 0) {
-            return [destination, destination + 2 * this.board.columns];
+            return [destination, destination + 2 * this.board.columns]; // Original + alternative path
         }
 
-        // --- Rot Entscheidungslogik ---
-        // Rot: Entscheidung am Übergang von Reihe 2 nach 3
+        // --- Red decision logic: from row 2 to 3, give two possible destinations ---
         if (piece.color === "red" && row === 2 && Math.floor(destination / this.board.columns) === 3) {
-            return [destination, destination - 2 * this.board.columns];
+            return [destination, destination - 2 * this.board.columns]; // Original + alternative path
         }
 
-        // Kein Entscheidungsfall
-        return null;
+        return null;                                                // No decision point
     }
 
+    // === Checks if either player has won the game ===
     checkWinCondition() {
         let hasRed = false, hasBlue = false;
 
         for (let piece of this.board.pieces) {
             if (piece) {
-                if (piece.color === "red") hasRed = true;
-                if (piece.color === "blue") hasBlue = true;
+                if (piece.color === "red") hasRed = true;          // Track red pieces
+                if (piece.color === "blue") hasBlue = true;        // Track blue pieces
             }
         }
 
-        if (!hasRed) {
+        if (!hasRed) {                                             // Blue wins
             this.board.showMessage("Blue wins!");
             return false;
-        } else if (!hasBlue) {
+        } else if (!hasBlue) {                                     // Red wins
             this.board.showMessage("Red wins!");
             return false;
         }
-        return true;
+        return true;                                               // Game continues
     }
 
+    // === Calculates the destination index for a piece based on dice roll ===
     getDestination(piece) {
-        // Find the current index of the selected piece in the board's piece array
         if(this.diceResult === null) return;
         let steps = this.diceResult;
         const index = this.board.pieces.indexOf(piece);
-        if (index === -1) return; // Safety check: if the piece is not found, exit the function
+        if (index === -1) return;
 
-        // Calculate the current row and column of the piece based on its index
         let row = Math.floor(index / this.board.columns);
         let col = index % this.board.columns;
 
-        // Loop until the number of movement steps is exhausted
-        while (steps > 0) {
+        while (steps > 0) {                                        // Move piece step by step
             if (piece.color === "blue") {
-                // --- BLUE PLAYER MOVEMENT ---
-                // Movement direction alternates each row to create a "snake-like" pattern.
-                // On even-numbered rows: move left (decrease column index).
-                // On odd-numbered rows: move right (increase column index).
+                if (row % 2 === 0) col--; else col++;             // Snake-like horizontal movement
+                if (col >= this.board.columns) { col = this.board.columns - 1; row--; }
+                if (col < 0) { col = 0; row = (row === 0) ? row + 1 : row - 1; }
+            } else {                                               // Red movement downwards
                 if (row % 2 === 0) col--; else col++;
-
-                // If the piece moves beyond the right boundary of the board (too far right),
-                // set it to the last column and move one row upward (row--).
-                if (col >= this.board.columns) { 
-                    col = this.board.columns - 1; 
-                    row--; 
-                }
-
-                // If the piece moves beyond the left boundary of the board (too far left),
-                // set it to the first column and move one row upward (row--).
-                if (col < 0) { 
-                    col = 0;
-                    if(row === 0) {
-                        row++;
-                    } else {
-                        row--;
-                    } 
-                }
-            } else { 
-                // --- RED PLAYER MOVEMENT ---
-                // Same horizontal pattern (snake-like) as blue,
-                // but moves vertically downward instead of upward.
-                if (row % 2 === 0) col--; else col++;
-
-                // If the piece moves beyond the right boundary, correct it and move one row down (row++).
-                if (col >= this.board.columns) { 
-                    col = this.board.columns - 1;
-                    if (row === 3) {
-                        row--;
-                    } else {
-                        row++; 
-                    } 
-                }
-
-                // If the piece moves beyond the left boundary, correct it and move one row down (row++).
-                if (col < 0) { 
-                    col = 0;
-                    row++;
-                }
+                if (col >= this.board.columns) { col = this.board.columns - 1; row = (row === 3) ? row - 1 : row + 1; }
+                if (col < 0) { col = 0; row++; }
             }
-            // Decrease the step count after each movement
             steps--;
         }
 
-        // Return the calculated destination index (row * number of columns + column index)
-        return row * this.board.columns + col;
+        return row * this.board.columns + col;                     // Return linear index of destination
     }
 
-
+    // === Moves a piece to a specific cell and updates board array ===
     movePieceForward(piece, destination){
         const index = this.board.pieces.indexOf(piece);
         let row = Math.floor(destination / this.board.columns);
         let col = destination % this.board.columns;
 
-        this.board.pieces[index] = null;
-        this.board.pieces[destination] = piece;
+        this.board.pieces[index] = null;                           // Remove piece from old position
+        this.board.pieces[destination] = piece;                    // Place piece in new position
 
         const cell = this.board.cells[row][col];
-        piece.animate(cell);
+        piece.animate(cell);                                       // Update DOM
     }
 
+    // === Removes all highlights and click handlers from decision cells ===
     disableHighlights() {
         this.board.cells.flat().forEach(cell => {
-            cell.classList.remove("highlight");
-            cell.onclick = null;
+            cell.classList.remove("highlight");                   // Remove highlight class
+            cell.onclick = null;                                   // Disable onclick
         });
     }
 
+    // === Switches current player and optionally flips the board visually ===
     switchTurn(){
         this.board.currentPlayer = this.board.currentPlayer === "blue" ? "red" : "blue";
         if (this.board.currentPlayer === 'red') {
-            this.board.boardElement.classList.add('flipped');
+            this.board.boardElement.classList.add('flipped');     // Flip board for red
         } else {
-            this.board.boardElement.classList.remove('flipped');
+            this.board.boardElement.classList.remove('flipped');  // Unflip for blue
         }
         this.board.showMessage(`${this.board.currentPlayer}'s turn! Roll the dice.`);
     }
@@ -404,7 +369,7 @@ class Game {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    //Generate initial standard Board
+    //Generate initial standard Board with 9 columns and blue starting
     const game = new Game(9, "blue");
 
 // ================== SETTINGS SECTION ==================
