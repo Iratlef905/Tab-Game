@@ -5,210 +5,299 @@
 
 
 :root {
-  /* =========================
+    /* =========================
      Base font & sizing
      ========================= */
-  font-size: 16px; /* Root font size for rem units throughout the project */
-  --standard-font: Arial, Helvetica, sans-serif; /* Default body font */
-  --standard-fontsize: 1.5rem; /* Default font size for body text */
+    font-size: 16px;
+    /* Root font size for rem units throughout the project */
+    --standard-font: Arial, Helvetica, sans-serif;
+    /* Default body font */
+    --standard-fontsize: 1.5rem;
+    /* Default font size for body text */
 
-  /* =========================
+    /* =========================
      Background colors
      ========================= */
-  --background-color: #000000;  /* Main page background */
-  --background-color2: #222222; /* Secondary background: sidebar, fields, etc. */
+    --background-color: #000000;
+    /* Main page background */
+    --background-color2: #222222;
+    /* Secondary background: sidebar, fields, etc. */
 
-  /* =========================
+    /* =========================
      Text colors
      ========================= */
-  --text-color: #FFFFFF;   /* Primary text color */
-  --text-color2: #000000;  /* Text on light backgrounds */
+    --text-color: #FFFFFF;
+    /* Primary text color */
+    --text-color2: #000000;
+    /* Text on light backgrounds */
 
-  /* =========================
+    /* =========================
      Header typography
      ========================= */
-  --header-font: Verdana, Geneva, Tahoma, sans-serif; /* Heading font stack */
-  --header-color: #00A2A2;       /* Primary heading color */
-  --header-3d-effect: #5ACFD7;   /* Shadow/3D accent color */
-  --shadow: #FFFFFF;              /* General text shadow / glow */
+    --header-font: Verdana, Geneva, Tahoma, sans-serif;
+    /* Heading font stack */
+    --header-color: #00A2A2;
+    /* Primary heading color */
+    --header-3d-effect: #5ACFD7;
+    /* Shadow/3D accent color */
+    --shadow: #FFFFFF;
+    /* General text shadow / glow */
 
-  /* =========================
+    /* =========================
      Accent & UI colors
      ========================= */
-  --seperator-lines: #00A2A2; /* Divider and separator lines */
-  --border-color: #00A2A2;    /* Borders for fields/inputs/buttons */
-  --button-color: #00A2A2;    /* Default button background */
-  --hover-color: #5ACFD7;     /* Button hover or highlight color */
+    --seperator-lines: #00A2A2;
+    /* Divider and separator lines */
+    --border-color: #00A2A2;
+    /* Borders for fields/inputs/buttons */
+    --button-color: #00A2A2;
+    /* Default button background */
+    --hover-color: #5ACFD7;
+    /* Button hover or highlight color */
 
-  /* =========================
+    /* =========================
      Spacing & sizing
      ========================= */
-  --space-xs: 0.25rem; /* Extra small spacing */
-  --space-sm: 0.5rem;  /* Small spacing */
-  --space-md: 1.2rem;  /* Medium spacing (used for main content, padding, gap) */
-  --space-lg: 2rem;    /* Large spacing */
+    --space-xs: 0.25rem;
+    /* Extra small spacing */
+    --space-sm: 0.5rem;
+    /* Small spacing */
+    --space-md: 1.2rem;
+    /* Medium spacing (used for main content, padding, gap) */
+    --space-lg: 2rem;
+    /* Large spacing */
 
-  /* =========================
+    /* =========================
      Border radius
      ========================= */
-  --radius-sm: 0.3rem; /* Small rounded corners (buttons, inputs) */
-  --radius-md: 0.5rem; /* Medium rounded corners (fields, cards) */
+    --radius-sm: 0.3rem;
+    /* Small rounded corners (buttons, inputs) */
+    --radius-md: 0.5rem;
+    /* Medium rounded corners (fields, cards) */
 }
 
 
 /* Global styles for the whole page */
 body {
-    background-color: var(--background-color);  /* Background for the page */
-    color: var(--text-color);                   /* Default text color */
-    font-family: var(--standard-font);          /* Defenition of font family */
-    font-size: var(--standard-fontsize);        /* Default text size, 1.5x standard */
-    margin: 0rem;                               /* Space around the body content (default would be 8px)*/
-} 
+    background-color: var(--background-color);
+    /* Background for the page */
+    color: var(--text-color);
+    /* Default text color */
+    font-family: var(--standard-font);
+    /* Defenition of font family */
+    font-size: var(--standard-fontsize);
+    /* Default text size, 1.5x standard */
+    margin: 0rem;
+    /* Space around the body content (default would be 8px)*/
+}
 
 /* Main page heading */
 h1 {
-    color: var(--header-color);                       /* Color for heading */
-    font-size: 4rem;                                  /* Large heading size */
-    font-family: var(--header-font);                  /* Font stack for heading */
-    text-align: center;                               /* Center the heading horizontally */
-    text-shadow:                                      /* Adds a layered glow/3D effect */
-        1px 1px 0 var(--header-3d-effect),            /* Light shadow offset by 1px */
-        2px 2px 0 var(--header-3d-effect),            /* Light shadow offset by 2px */
-        0 0 5rem var(--shadow);                       /* Glow effect around the text */
+    color: var(--header-color);
+    /* Color for heading */
+    font-size: 4rem;
+    /* Large heading size */
+    font-family: var(--header-font);
+    /* Font stack for heading */
+    text-align: center;
+    /* Center the heading horizontally */
+    text-shadow:
+        /* Adds a layered glow/3D effect */
+        1px 1px 0 var(--header-3d-effect),
+        /* Light shadow offset by 1px */
+        2px 2px 0 var(--header-3d-effect),
+        /* Light shadow offset by 2px */
+        0 0 5rem var(--shadow);
+    /* Glow effect around the text */
 }
 
-/* Grid container for main layout: main content + sidebar */
-.grid-container {
-  display: grid;                          /* Use CSS Grid layout */
-  grid-template-columns: 1fr;       /* First column flexible (main content), second column fixed at 13rem (sidebar) */
-  grid-template-rows: 1fr;                /* Single row, height determined by content */
-}
 
 /* Main content section inside the grid */
 .main-content {
-  padding: 1.2rem;                          /* Space inside the main content container */
+    padding: 1.2rem;
+    /* Space inside the main content container */
 }
 
 /* Top bar at the top: Login form on the left, heading on the right */
 .top-bar {
-  display: flex;           /* Use flexbox to arrange children horizontally */
-  align-items: center;     /* Vertically center items within the top bar */
-  height: 6rem;            /* Height of the top bar: 6 times the relative size defines as rem in the Root */
+    display: flex;
+    /* Use flexbox to arrange children horizontally */
+    align-items: center;
+    /* Vertically center items within the top bar */
+    height: 6rem;
+    /* Height of the top bar: 6 times the relative size defines as rem in the Root */
 }
 
 /* Style the main heading inside the top bar */
 .top-bar h1 {
-  margin: 0 auto;          /* Horizontally center the heading within the top bar */
+    margin: 0 auto;
+    /* Horizontally center the heading within the top bar */
 }
 
 /* Sidebar styling */
 .sidebar {
-  background: var(--background-color2);   /* Dark background for the sidebar, color comes from a CSS variable */
-  padding: 1.2rem;                        /* Inner spacing inside the sidebar */
-  position: fixed;                        /* Fixed position to stay visible during scrolling */
-  top: 0;                                 /* Stick at the very top of the viewport */
-  right: -12rem;                          /* Start hidden outside the right edge of the screen (adjust width if needed) */
-  width: 10rem;                            /* Set the sidebar width */
-  height: 100dvh;                          /* Full dynamic viewport height */
-  overflow-y: auto;                        /* Enable vertical scrolling if content overflows */
-  border-left: 2px solid var(--seperator-lines); /* Left border as visual accent */
-  box-shadow: -2px 0 8px rgba(0,0,0,0.3);  /* Slight shadow to separate sidebar from content */
-  transition: right 0.3s ease;            /* Smooth slide-in/out animation */
-  z-index: 1000;                           /* Ensure the sidebar is on top of other elements */
+    background: var(--background-color2);
+    /* Dark background for the sidebar, color comes from a CSS variable */
+    padding: 1.2rem;
+    /* Inner spacing inside the sidebar */
+    position: fixed;
+    /* Fixed position to stay visible during scrolling */
+    top: 0;
+    /* Stick at the very top of the viewport */
+    right: -12rem;
+    /* Start hidden outside the right edge of the screen (adjust width if needed) */
+    width: 10rem;
+    /* Set the sidebar width */
+    height: 100dvh;
+    /* Full dynamic viewport height */
+    overflow-y: auto;
+    /* Enable vertical scrolling if content overflows */
+    border-left: 2px solid var(--seperator-lines);
+    /* Left border as visual accent */
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
+    /* Slight shadow to separate sidebar from content */
+    transition: right 0.3s ease;
+    /* Smooth slide-in/out animation */
+    z-index: 1000;
+    /* Ensure the sidebar is on top of other elements */
 }
 
 /* Invisible hover zone at the right edge of the screen */
 .hover-zone {
-  content: '';                             /* Empty content */
-  position: fixed;                         /* Fixed to stay in place when scrolling */
-  top: 0;                                  /* Start at top of viewport */
-  right: 0;                                /* Stick to the right edge */
-  width: 50px;                             /* Width of hover-sensitive area */
-  height: 100vh;                           /* Full viewport height */
-  z-index: 999;                            /* Slightly lower than sidebar so hover works */
+    content: '';
+    /* Empty content */
+    position: fixed;
+    /* Fixed to stay in place when scrolling */
+    top: 0;
+    /* Start at top of viewport */
+    right: 0;
+    /* Stick to the right edge */
+    width: 50px;
+    /* Width of hover-sensitive area */
+    height: 100vh;
+    /* Full viewport height */
+    z-index: 999;
+    /* Slightly lower than sidebar so hover works */
 }
 
 /* When user hovers over the right edge, show the sidebar */
-.hover-zone:hover + .sidebar,
+.hover-zone:hover+.sidebar,
 .sidebar:hover {
-  right: 0;                                /* Slide the sidebar fully into view */
+    right: 0;
+    /* Slide the sidebar fully into view */
 }
 
 
 /* Container for various fields (e.g., board, dice, messages) */
 .fields-container {
-  display: grid;                        /* Use CSS Grid for layout */
-  grid-template-columns: 2fr 1fr;       /* Two columns: first takes 2 parts, second 1 part */
-  grid-template-rows: 5fr 1fr;          /* Two rows: first 5 parts, second 1 part */
-  height: 90vh;                         /* Fallback for old Browsers in case dvh is not known */
-  height: 90dvh;                        /* Container height: 70% of dynamic viewport(screen) height */
-  gap: 1.2rem;                          /* Gap between rows and columns */
-  margin-top: 1.2rem;                   /* Space above the container */
+    display: grid;
+    /* Use CSS Grid for layout */
+    grid-template-columns: 2fr 1fr;
+    /* Two columns: first takes 2 parts, second 1 part */
+    grid-template-rows: 1fr;
+    /* One Row */
+    height: 70vh;
+    /* Fallback for old Browsers in case dvh is not known */
+    height: 70dvh;
+    /* Container height: 70% of dynamic viewport(screen) height */
+    gap: 1.2rem;
+    /* Gap between rows and columns */
+    margin-top: 1.2rem;
+    /* Space above the container */
 }
 
 /* Individual field styling */
-.field {
-  background: var(--background-color2);   /* Dark gray background for each field */
-  border: 2px solid var(--border-color);  /* Cyan border around each field */
-  padding: 1.2rem;                        /* Space inside the field */
-  border-radius: 0.5rem;                  /* Rounded corners for modern look */
-  text-align: center;                     /* Center content horizontally */
+.field.message {
+    background: var(--background-color2);
+    /* Dark gray background for each field */
+    border: 2px solid var(--border-color);
+    /* Cyan border around each field */
+    padding: 1.2rem;
+    /* Space inside the field */
+    border-radius: 0.5rem;
+    /* Rounded corners for modern look */
+    text-align: center;
+    /* Center content horizontally */
 }
 
-/* Specific styling for the message field to span multiple columns */
-.field.message {
-  grid-column: span 2;   /* This field takes up 2 columns in the grid */
+/* Specific styling for the board Field to be able to also contain the messages field and the Setting */
+.field.board {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 0 rem;
 }
 
 /* Horizontal divider line */
 .divider {
-  border: none;                                   /* Remove all default borders */
-  border-top: 2px solid var(--seperator-lines);   /* Top border only, 2px cyan line */
-  margin: 1.2rem 0;                               /* Space above and below the line */
+    border: none;
+    /* Remove all default borders */
+    border-top: 2px solid var(--seperator-lines);
+    /* Top border only, 2px cyan line */
+    margin: 1.2rem 0;
+    /* Space above and below the line */
 }
 
 /* Login container: form layout */
 .login-container form {
-  display: flex;                  /* Use flexbox for form layout */
-  flex-direction: column;         /* Stack inputs and button vertically */
-  gap: 0.5rem;                    /* Space between each input/button */
+    display: flex;
+    /* Use flexbox for form layout */
+    flex-direction: column;
+    /* Stack inputs and button vertically */
+    gap: 0.5rem;
+    /* Space between each input/button */
 }
 
 /* Styling for input fields inside the login form */
 .login-container input {
-  font-size: 0.7rem;                        /* Smaller text inside inputs */
-  padding: 0.3rem 0.5rem;                   /* Inner spacing: top/bottom 6px, left/right 9px */
-  border-radius: 0.3rem;                    /* Rounded corners */
-  border: 1px solid var(--border-color);    /* Cyan border */
-  background: var(--background-color2);     /* Dark background */
-  color: var(--text-color);                 /* White text */
+    font-size: 0.7rem;
+    /* Smaller text inside inputs */
+    padding: 0.3rem 0.5rem;
+    /* Inner spacing: top/bottom 6px, left/right 9px */
+    border-radius: 0.3rem;
+    /* Rounded corners */
+    border: 1px solid var(--border-color);
+    /* Cyan border */
+    background: var(--background-color2);
+    /* Dark background */
+    color: var(--text-color);
+    /* White text */
 }
 
 /* Styling for login button */
 .login-container button {
-  font-size: 0.9rem;                /* Smaller text for compact button */
-  padding: 0.2rem;                  /* Inner spacing for button */
-  border-radius: 0.3rem;            /* Rounded corners */
-  border: none;                     /* Remove default border */
-  background: var(--button-color);  /* Cyan button background */
-  color: var(--text-color2);        /* Black text */
-  font-weight: bold;                /* Bold text for emphasis */
-  cursor: pointer;                  /* Pointer cursor on hover */
+    font-size: 0.9rem;
+    /* Smaller text for compact button */
+    padding: 0.2rem;
+    /* Inner spacing for button */
+    border-radius: 0.3rem;
+    /* Rounded corners */
+    border: none;
+    /* Remove default border */
+    background: var(--button-color);
+    /* Cyan button background */
+    color: var(--text-color2);
+    /* Black text */
+    font-weight: bold;
+    /* Bold text for emphasis */
+    cursor: pointer;
+    /* Pointer cursor on hover */
 }
 
 /* Hover effect for login button */
 .login-container button:hover {
-  background: var(--hover-color);           /* Change button background to lighter cyan on hover */
-  box-shadow: 0 0 0.8rem var(--shadow);     /* Add glowing shadow effect */
+    background: var(--hover-color);
+    /* Change button background to lighter cyan on hover */
+    box-shadow: 0 0 0.8rem var(--shadow);
+    /* Add glowing shadow effect */
 }
-
-
 
 
 /*RULES*/
 
 .rules-section h2 {
-    font-family: 'Edo Sz', sans-serif; /*??*/
+    font-family: 'Edo Sz', sans-serif;
+    /*??*/
     font-size: 200%;
     text-align: left;
     margin-left: 10%;
@@ -216,43 +305,44 @@ h1 {
 }
 
 .rules-section summary h2::before {
-  content: "+ ";
+    content: "+ ";
 }
 
 .rules-section details[open] summary h2::before {
-  content: "- ";
+    content: "- ";
 }
 
 .rules-section details summary h3::before {
-  content: "+ ";
-  margin-right: 6px;
+    content: "+ ";
+    margin-right: 6px;
 }
 
-.rules-section details[open] > summary h3::before {
-  content: "- ";
+.rules-section details[open]>summary h3::before {
+    content: "- ";
 }
 
 .rules-section ul {
     margin-left: 12%;
 }
 
-.rules-points h3{
-    font-family: 'Edo Sz', sans-serif; /*??*/
+.rules-points h3 {
+    font-family: 'Edo Sz', sans-serif;
+    /*??*/
     text-align: left;
     color: #F0F0F0;
 }
 
-.rules-points li{
+.rules-points li {
     margin-left: -10%;
     font-family: 'Myriad Pro', sans-serif;
 }
 
-.rules-points ul{
+.rules-points ul {
     list-style-type: disc;
 }
 
 .rules-points ul li:nth-child(odd)::marker {
-    color: rgb(49,83,194);
+    color: rgb(49, 83, 194);
 }
 
 .rules-points ul li:nth-child(even)::marker {
@@ -261,40 +351,40 @@ h1 {
 
 
 details {
-  margin-bottom: -16px;
+    margin-bottom: -16px;
 }
 
 details[open] {
-  padding-bottom: 12px;
+    padding-bottom: 12px;
 }
 
 summary {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 
 summary::before {
-  color: #F0F0F0;
-  font-size: 16px;
-  margin-right: 6.4px;
+    color: #F0F0F0;
+    font-size: 16px;
+    margin-right: 6.4px;
 }
 
 
 
 summary h3 {
-  display: inline;
-  color: #F0F0F0;
-  transition: color 0.3s;
+    display: inline;
+    color: #F0F0F0;
+    transition: color 0.3s;
 }
 
 summary:hover h3 {
-  color: #67d2dc;
+    color: #67d2dc;
 }
 
 summary:hover h2 {
-  color: #67d2dc;
+    color: #67d2dc;
 }
 
 
@@ -325,7 +415,8 @@ summary:hover h2 {
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
-.scoreboard th, .scoreboard td {
+.scoreboard th,
+.scoreboard td {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     padding: 12px 20px;
     color: #F0F0F0;
@@ -346,113 +437,250 @@ summary:hover h2 {
 /* Board*/
 
 .controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
 .controls label {
-  font-weight: bold;
-  font-size: 0.9rem;
+    font-weight: bold;
+    font-size: 0.9rem;
 }
 
 .controls input {
-  width: 60px;
-  text-align: center;
-  border-radius: 6px;
-  border: 1px solid #00eaff;
-  background: #111;
-  color: white;
+    width: 60px;
+    text-align: center;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--background-color2);
+    color: var(--text-color);
 }
 
 .controls button {
-  background: #00eaff;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 8px;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
+    background: var(--button-color);
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--text-color2);
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .controls button:hover {
-  background: #00ffff;
-  box-shadow: 0 0 8px #00ffff;
+    background: var(--hover-color);
+    box-shadow: 0 0 8px var(--shadow);
 }
 
 /* Board grid styling */
+.board-container {
+    display: flex;              /* Flexbox für Zentrierung */
+    justify-content: center;    /* horizontal zentrieren */
+    align-items: center;        /* vertikal zentrieren */
+    height: 100%;               /* optional, Höhe des Containers */
+}
+
 .board {
-  display: grid;
-  gap: 6px;
-  justify-content: center;
-  background-color: #000000; 
-  padding: 0px; 
-  border-radius: 12px;
-  border: 8px solid #000000; 
+    display: grid;
+    gap: 6px;
+    justify-content: center;
+    background-color: #000000;
+    padding: 0px;
+    border-radius: 12px;
+    border: 8px solid #000000;
+}
+
+.board.flipped {
+  transform: rotate(180deg);
+  transform-origin: center;
 }
 
 .cell {
-  background-color: #fffbe8;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 56px;
-  height: 56px;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1); 
+    background-color: #fffbe8;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 56px;
+    height: 56px;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.cell.highlight {
+    border: 3px solid yellow;
+    box-shadow: 0 0 10px yellow;
 }
 
 .piece {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
 }
 
 .blue {
-  background-color: #3a6ff7;
+    background-color: #3a6ff7;
 }
 
 .red {
-  background-color: #e14a4a;
+    background-color: #e14a4a;
 }
 
 
 /* Dice field */
 #dice-field {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .dice-container {
-  margin: 10px 0;
+    margin: 10px 0;
 }
 
 #dice-image {
-  width: 250px;              
-  height: 250px;              
-  border: 4px solid var(--border-color);
-  border-radius: 16px;
-  background-color: #111;
-  box-shadow: 0 0 20px rgba(0, 1, 1, 0.4);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+    width: 250px;
+    height: 250px;
+    border: 4px solid var(--border-color);
+    border-radius: 16px;
+    background-color: #111;
+    box-shadow: 0 0 20px rgba(0, 1, 1, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
 /* Roll dice button */
 #rollDiceBtn {
-  background: #00eaff;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 8px;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
+    background: var(--button-color);
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--text-color2);
+    font-weight: bold;
+    cursor: pointer;
 }
 
 #rollDiceBtn:hover {
-  background: #00ffff;
-  box-shadow: 0 0 8px #00ffff;
+    background: var(--hover-color);
+    box-shadow: 0 0 8px var(--shadow);
+}
+
+/* Sidebar buttons */
+.sidebar-button {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #ffff;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
+    padding: 8px 0;
+    margin-bottom: 8px;
+    transition: color 0.2s ease;
+
+}
+
+.sidebar-button:hover {
+    color: #00ffff;
+    text-shadow: 0 0 6px #00ffff;
+}
+
+.sidebar a.sidebar-button {
+    display: block;
+    text-decoration: none;
+    color: #ffff;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 8px 0;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.sidebar a.sidebar-button:hover {
+    color: #00ffff;
+    text-shadow: 0 0 6px #00ffff;
+}
+
+/* Hide default summary arrow */
+.new-game-dropdown summary {
+    list-style: none;
+}
+
+/* New Game settings container */
+.new-game-settings {
+    display: flex;
+    flex-direction: column;
+    background-color: #181818;
+    border: 1px solid #00eaff;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 8px;
+}
+
+/* Smooth slide-down animation */
+.new-game-dropdown[open] .new-game-settings {
+    animation: slideDown 0.25s ease-out forwards;
+}
+
+.new-game-dropdown:focus-within>summary,
+.new-game-dropdown[open]>summary {
+    color: #00ffff;
+    text-shadow: 0 0 6px #00ffff;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Labels */
+.new-game-settings label {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    color: #F0F0F0;
+}
+
+/* Dropdown selects */
+.new-game-settings select {
+    margin-top: 4px;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #00eaff;
+    background-color: #111;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+/* Disabled difficulty */
+#difficultySelect:disabled {
+    background-color: #333;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* Start Game button */
+.start-btn {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    font-weight: bold;
+    background-color: #00eaff;
+    color: black;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.start-btn:hover {
+    background-color: #00ffff;
+    box-shadow: 0 0 8px #00ffff;
 }
