@@ -291,26 +291,54 @@ class Game {
         return null;                                                // No decision point
     }
 
-    // === Checks if either player has won the game ===
+    // === Checks if either player has won the game and updates scoreboard ===
     checkWinCondition() {
         let hasRed = false, hasBlue = false;
 
         for (let piece of this.board.pieces) {
             if (piece) {
-                if (piece.color === "red") hasRed = true;          // Track red pieces
-                if (piece.color === "blue") hasBlue = true;        // Track blue pieces
+                if (piece.color === "red") hasRed = true;
+                if (piece.color === "blue") hasBlue = true;
             }
         }
-
-        if (!hasRed) {                                             // Blue wins
-            this.board.showMessage("Blue wins!");
+    
+        if (!hasRed) {
+            this.board.showMessage("🔵 Blue wins!");
+            this.updateScoreboard("blue");
             return false;
-        } else if (!hasBlue) {                                     // Red wins
-            this.board.showMessage("Red wins!");
+        } 
+        else if (!hasBlue) {
+            this.board.showMessage("🔴 Red wins!");
+            this.updateScoreboard("red");
             return false;
         }
-        return true;                                               // Game continues
+
+        return true; // Game continues
     }
+
+    // === Updates the scoreboard based on the winner ===
+    updateScoreboard(winner) {
+        const scoreboard = document.querySelector(".scoreboard table tbody");
+        if (!scoreboard) return;
+
+        // finc each players points
+        const rows = scoreboard.querySelectorAll("tr");
+        const blue_p = rows[0];
+        const red_p = rows[1];
+
+        // increment the "Best Result" count
+        if (winner === "blue") {
+            const cell = blue_p.querySelectorAll("td")[1];
+            let current = parseInt(cell.textContent) || 0;
+            cell.textContent = current + 1; // updates
+        } else if (winner === "red") {
+            const cell = red_p.querySelectorAll("td")[1];
+            let current = parseInt(cell.textContent) || 0;
+            cell.textContent = current + 1; // updates
+        }
+    }
+
+
 
     // === Calculates the destination index for a piece based on dice roll ===
     getDestination(piece) {
@@ -468,3 +496,4 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================== AI LOGIC ==================
 
 });
+
