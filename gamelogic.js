@@ -213,10 +213,6 @@ class Game {
 
     // === Triggered when a piece is clicked; handles movement, capturing, and turn logic ===
     async onPieceClicked(piece) {
-        if (piece.isLastRow) {
-            this.board.showMessage("Essa peça já chegou à última fila e não pode mover-se mais!");
-            return;
-        }
         
         if (piece.color !== this.board.currentPlayer) {              // Check piece belongs to current player
             this.board.showMessage("You can't move pieces of the opponent!");
@@ -291,6 +287,8 @@ class Game {
         return null;                                                // No decision point
     }
 
+
+    // ========== CHANGED A FEW THINGS HERE ============ //
     // === Checks if either player has won the game and updates scoreboard ===
     checkWinCondition() {
         let hasRed = false, hasBlue = false;
@@ -315,7 +313,9 @@ class Game {
 
         return true; // Game continues
     }
+    
 
+    // ============== NEW CODE FOR UPDATING THE SCOREBOARD =============== //
     // === Updates the scoreboard based on the winner ===
     updateScoreboard(winner) {
         const scoreboard = document.querySelector(".scoreboard table tbody");
@@ -372,6 +372,8 @@ class Game {
         let row = Math.floor(destination / this.board.columns);
         let col = destination % this.board.columns;
         
+
+        // ============ NEW CODE FOR CHECKING IF PIECE HAS BEEN TO LAST ROW ============== //
         if (piece.isLastRow) { // checks if the piece already been in last row, and if so stops it
             if ((piece.color === "red" && row === this.board.rows - 1) ||
                 (piece.color === "blue" && row === 0)) {
@@ -496,4 +498,3 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================== AI LOGIC ==================
 
 });
-
