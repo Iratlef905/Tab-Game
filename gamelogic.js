@@ -302,9 +302,11 @@ class Game {
 
         if (!hasRed) {                                             // Blue wins
             this.board.showMessage("Blue wins!");
+            this.updateScoreboard("blue");
             return false;
         } else if (!hasBlue) {                                     // Red wins
             this.board.showMessage("Red wins!");
+            this.updateScoreboard("red");
             return false;
         }
 
@@ -488,3 +490,4 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================== AI LOGIC ==================
 
 });
+
