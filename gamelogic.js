@@ -295,19 +295,16 @@ class Game {
 
         for (let piece of this.board.pieces) {
             if (piece) {
-                if (piece.color === "red") hasRed = true;
-                if (piece.color === "blue") hasBlue = true;
+                if (piece.color === "red") hasRed = true;          // Track red pieces
+                if (piece.color === "blue") hasBlue = true;        // Track blue pieces
             }
         }
-    
-        if (!hasRed) {
-            this.board.showMessage("🔵 Blue wins!");
-            this.updateScoreboard("blue");
+
+        if (!hasRed) {                                             // Blue wins
+            this.board.showMessage("Blue wins!");
             return false;
-        } 
-        else if (!hasBlue) {
-            this.board.showMessage("🔴 Red wins!");
-            this.updateScoreboard("red");
+        } else if (!hasBlue) {                                     // Red wins
+            this.board.showMessage("Red wins!");
             return false;
         }
 
@@ -337,8 +334,6 @@ class Game {
             cell.textContent = current + 1; // updates
         }
     }
-
-
 
     // === Calculates the destination index for a piece based on dice roll ===
     getDestination(piece) {
@@ -386,12 +381,7 @@ class Game {
         this.board.pieces[destination] = piece;                    // Place piece in new position
 
         const cell = this.board.cells[row][col];
-        piece.animate(cell); // Update DOM
-
-        if ((piece.color === "red" && row === this.board.rows - 1) ||
-            (piece.color === "blue" && row === 0)) {
-            piece.reachedLastRow();
-        }
+        piece.animate(cell);                                       // Update DOM
     }
 
     // === Removes all highlights and click handlers from decision cells ===
