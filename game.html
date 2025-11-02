@@ -75,7 +75,7 @@
                             <summary><h3>The Board</h3></summary>
                             <ul>
                                 <li>Board has four lines</li>
-                                <li>Number of columns must be odd</li>
+                                <li>Number of columns can be between 7 and 15, but must be odd</li>
                             </ul>
                         </details>
 
@@ -101,9 +101,9 @@
                             <summary><h3>Moving the Pieces</h3></summary>
                             <ul>
                                 <li>First move always 1 space (must throw dice first)</li>
-                                <li>Cannot move to a spot with opponent pieces</li>
-                                <li>Odd rows: move right → left; even rows: left → right</li>
-                                <li>Row transitions: 1 → 2, 2 → 3, 3 → 2/4, 4 → 3</li>
+                                <li>Cannot move to a spot with your own pieces</li>
+                                <li>Odd rows must: move from right → left; Even rows must: move from left → right</li>
+                                <li>Row transitions: A player can exit row 1 to 2, row 2, into 1 or 3, row 3 into 2 or 4, and row 4 into 3</li>
                                 <li>Landing on opponent piece captures it</li>
                                 <li>Game ends when one player has no pieces on board</li>
                             </ul>
@@ -114,8 +114,8 @@
                             <ul>
                                 <li>Only one piece per spot</li>
                                 <li>Piece can only enter 4th row once</li>
-                                <li>Cannot move in 4th row if any piece in 1st row</li>
-                                <li>Piece cannot return to 1st row</li>
+                                <li>Cannot move pieces in 4th row if any piece in 1st row</li>
+                                <li>Piece cannot return to the 1st row</li>
                             </ul>
                         </details>
 
@@ -141,17 +141,17 @@
                 <thead>
                     <tr>
                         <th>Player</th>       <!-- Column for player names -->
-                        <th>Best Result</th>  <!-- Column for storing best score -->
+                        <th>Score</th>  <!-- Column for storing best score -->
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Player 1</td>     <!-- Player 1 entry -->
-                        <td>??</td>           <!-- Placeholder for best result -->
+                        <td>Blue</td>     <!-- Player 1 entry -->
+                        <td>0</td>           <!-- Placeholder for best result -->
                     </tr>
                     <tr>
-                        <td>Player 2</td>     <!-- Player 2 entry -->
-                        <td>??</td>           <!-- Placeholder for best result -->
+                        <td>Red</td>     <!-- Player 2 entry -->
+                        <td>0</td>           <!-- Placeholder for best result -->
                     </tr>
                 </tbody>
             </table>
