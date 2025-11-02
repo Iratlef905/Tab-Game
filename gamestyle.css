@@ -607,19 +607,26 @@ summary:hover h2 {
     text-shadow: 0 0 6px #00ffff;
 }
 
-.sidebar a.sidebar-button {
+.sidebar a,
+.sidebar button {
     display: block;
-    text-decoration: none;
-    color: #ffff;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #fff;
     font-weight: bold;
     font-size: 1rem;
+    cursor: pointer;
+    text-align: left;
     padding: 8px 0;
     margin-bottom: 8px;
-    cursor: pointer;
+    text-decoration: none;
     transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
-.sidebar a.sidebar-button:hover {
+/* Hover effect for both */
+.sidebar a:hover,
+.sidebar button:hover {
     color: #00ffff;
     text-shadow: 0 0 6px #00ffff;
 }
@@ -688,20 +695,3 @@ summary:hover h2 {
     cursor: not-allowed;
 }
 
-/* Start Game button */
-.start-btn {
-    margin-top: 10px;
-    padding: 8px;
-    border-radius: 6px;
-    border: none;
-    font-weight: bold;
-    background-color: #00eaff;
-    color: black;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.start-btn:hover {
-    background-color: #00ffff;
-    box-shadow: 0 0 8px #00ffff;
-}
