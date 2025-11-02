@@ -33,7 +33,7 @@
                 </form>
             </div>
 
-            <h1>Tab Game</h1> <!-- Main page heading, centered in top bar -->
+            <h1>Tâb Game</h1> <!-- Main page heading, centered in top bar -->
         </div>
 
         <hr class="divider"> <!-- Divider line to separate sections -->
@@ -55,6 +55,7 @@
                     <img id="dice-image" src="images/initial_dice.png" alt="Dice result"> <!-- Shows current dice face -->
                 </div>
                 <button id="rollDiceBtn">Roll Dice</button> <!-- Button to roll the dice -->
+                <button id="skipTurnBtn" disabled>Skip Turn</button>
             </div>
         </div>
 
@@ -141,17 +142,17 @@
                 <thead>
                     <tr>
                         <th>Player</th>       <!-- Column for player names -->
-                        <th>Best Result</th>  <!-- Column for storing best score -->
+                        <th>Wins</th>  <!-- Column for storing best score -->
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Player 1</td>     <!-- Player 1 entry -->
-                        <td>??</td>           <!-- Placeholder for best result -->
+                        <td>Blue</td>     <!-- Player 1 entry -->
+                        <td>0</td>           <!-- Placeholder for best result -->
                     </tr>
                     <tr>
-                        <td>Player 2</td>     <!-- Player 2 entry -->
-                        <td>??</td>           <!-- Placeholder for best result -->
+                        <td>Red</td>     <!-- Player 2 entry -->
+                        <td>0</td>           <!-- Placeholder for best result -->
                     </tr>
                 </tbody>
             </table>
