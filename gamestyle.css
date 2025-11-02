@@ -505,12 +505,31 @@ summary:hover h2 {
     width: 56px;
     height: 56px;
     box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .cell.highlight {
     border: 3px solid yellow;
     box-shadow: 0 0 10px yellow;
 }
+
+/* ADDED ARROWS TO BOARD CELLS */
+.cell .arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.cell .arrow.right {
+  right: 6px;
+}
+
+.cell .arrow.left {
+  left: 6px;
+}
+
 
 /* ADDED OPACITY VALUES */
 .piece {

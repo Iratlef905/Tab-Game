@@ -81,6 +81,18 @@ class Board {
                 }
             }
         }
+
+        // = ADDED --> and  <-- to each place on the board
+        const cells = this.boardElement.querySelectorAll('.cell');
+        cells.forEach((cell, i) => {
+            const row = Math.floor(i / this.columns);
+            const arrow = document.createElement('span');
+            arrow.classList.add('arrow');
+            // adds an arrow to the cell, depending on the direction the pieces move in that line (-> for odd and <- for even)
+            arrow.textContent = row % 2 === 0 ? '←' : '→';
+            cell.appendChild(arrow);
+        })
+
         this.showPieces();                                           // Render all pieces on the board
     }
 
