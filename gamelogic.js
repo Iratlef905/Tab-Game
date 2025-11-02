@@ -250,6 +250,51 @@ class Game {
         });
     }
 
+        // Check if there are any available moves
+        const movesAvailable = this.hasAvailableMoves();
+
+        if (!movesAvailable && this.extraMove) {
+            // No moves possible, but player can roll again
+            this.board.showMessage(`${this.board.currentPlayer} rolled ${result} but has no moves. Roll again!`);
+            this.dice.rollButton.disabled = false;  // Enable roll button for another turn
+            this.disablePieceClicks();               // No pieces to click
+            this.skipTurnButton.disabled = true;     // Skip button stays disabled
+        } else if (!movesAvailable && !this.extraMove) {
+            // No moves and no extra roll → allow skip turn
+            this.board.showMessage(`${this.board.currentPlayer} has no possible moves. Click "Skip Turn" to continue.`);
+            this.skipTurnButton.disabled = false;
+            this.disablePieceClicks();
+        } else {
+            // Moves available → enable piece clicks
+            this.enablePieceClicks();
+            this.skipTurnButton.disabled = true;
+        }
+        if (this.ai && this.board.currentPlayer === "red") {
+            setTimeout(() => this.ai.makeMove(), 1000);
+        }
+    }
+
+    // === Checks if the current player has any possible move ===
+    hasAvailableMoves() {
+        const playerColor = this.board.currentPlayer;
+        return this.board.pieces.some(piece => {
+            if (!piece || piece.color !== playerColor) return false;
+            if (!piece.wasMoved && this.diceResult !== 1) return false;
+
+            const choices = this.decidingPoint(piece);
+            if (choices && Array.isArray(choices)) {
+                return choices.some(idx => {
+                    if (idx == null) return false;
+                    const targetPiece = this.board.pieces[idx];
+                    return !targetPiece || targetPiece.color !== playerColor;
+                });
+            }
+            const destination = this.getDestination(piece);
+            const targetPiece = this.board.pieces[destination];
+            return !targetPiece || targetPiece.color !== playerColor;
+        });
+    }
+
     // === Allows player to skip their turn if no moves are available ===
     skipTurn() {
         this.skipTurnButton.disabled = true;  // Disable button again
@@ -464,11 +509,6 @@ class Game {
             (piece.color === "red" && row === this.board.rows - 1)){
                 piece.reachedLastRow();
             }
-        
-        // marks the piece as being moved and changes opacity to 75%
-        if (!piece.wasMoved) {
-            piece.firstmove();
-        }
 
 
         this.board.pieces[index] = null;                           // Remove piece from old position
@@ -487,58 +527,149 @@ class Game {
     }
 
     // === Switches current player and optionally flips the board visually ===
-    switchTurn(){
+    switchTurn() {
         this.board.currentPlayer = this.board.currentPlayer === "blue" ? "red" : "blue";
-        if (this.board.currentPlayer === 'red') {
-            this.board.boardElement.classList.add('flipped');     // Flip board for red
+    
+        if (this.board.currentPlayer === "red") {
+            this.board.boardElement.classList.add("flipped");
         } else {
-            this.board.boardElement.classList.remove('flipped');  // Unflip for blue
+            this.board.boardElement.classList.remove("flipped");
         }
+    
         this.board.showMessage(`Player ${this.board.currentPlayer}'s turn! Roll the dice.`);
+    
+        // ✅ AI auto-rolls if it's its turn
+        if (this.ai && this.board.currentPlayer === "red") {
+            this.dice.rollButton.disabled = true; // Disable human roll
+            setTimeout(() => this.dice.rollDice(), 1000); // AI rolls automatically
+        } else {
+            this.dice.rollButton.disabled = false; // Enable for human
+        }
+    }
+    
+    //Start New Game Button helper functions
+    setModePlayer() {
+        delete this.aiDifficulty;
+        if (this.dice?.rollButton) this.dice.rollButton.disabled = false;
+    }
+
+    setModeComputer(difficulty) {
+        this.aiDifficulty = difficulty || "normal";
+        if (this.dice?.rollButton) this.dice.rollButton.disabled = false;
+        // Future AI logic can go here
     }
 }
 
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    //Generate initial standard Board with 9 columns and blue starting
-    const game = new Game(9, "blue");
+    
 
-// ================== SETTINGS SECTION ==================
+// ================== SIDEBAR UI CONTROLLER ==================
+class SidebarUI {
+    constructor(gameInstance) {
+        this.game = gameInstance; // Link to your Game object
 
-    // Link HTML elements to JS variables for later use
-    const startGameBtn = document.getElementById("startGameBtn");     // "Start Game" button
-    const opponentSelect = document.getElementById("opponentSelect"); // Dropdown for choosing opponent (player/computer)
-    const difficultySelect = document.getElementById("difficultySelect"); // Dropdown for difficulty level (only for computer)
-    const columnsSelect = document.getElementById("columnsSelect");   // Dropdown for selecting number of board columns
+        // Cache sidebar elements
+        this.startGameBtn = document.getElementById("startGameBtn");
+        this.opponentSelect = document.getElementById("opponentSelect");
+        this.difficultySelect = document.getElementById("difficultySelect");
+        this.columnsSelect = document.getElementById("columnsSelect");
+        this.startingPlayerSelect = document.getElementById("StartingPlayerSelect");
+        this.giveUpBtn = document.getElementById("giveUpBtn");
 
-    // When opponent selection changes, enable or disable difficulty selection accordingly
-    opponentSelect.addEventListener("change", () => {
-        if (opponentSelect.value === "computer") difficultySelect.disabled = false;  // Enable difficulty if computer opponent
-        else difficultySelect.disabled = true;                                       // Disable otherwise
-    });
+        // Initialize event listeners
+        this.initializeEvents();
+    }
 
-    // Start new game when "Start Game" button is clicked
-    startGameBtn.addEventListener("click", () => {
-        const opponent = opponentSelect.value;          // "computer" or "player"
-        const difficulty = difficultySelect.value;      // "easy", "medium", "hard"
-        const columns = parseInt(columnsSelect.value);  // Convert number of columns from string to integer
+    initializeEvents() {
+        // Enable/disable difficulty dropdown based on opponent
+        if (this.opponentSelect && this.difficultySelect) {
+            this.opponentSelect.addEventListener("change", () => {
+                this.difficultySelect.disabled = this.opponentSelect.value !== "computer";
+            });
+            // Set initial state
+            this.difficultySelect.disabled = this.opponentSelect.value !== "computer";
+        }
 
-        isComputerOpponent = opponent === "computer";   // Boolean flag for opponent type
-        currentTurn = "red";                            // Red player starts first
+        // Handle "Start Game" button
+        if (this.startGameBtn) {
+            this.startGameBtn.addEventListener("click", () => this.startGame());
+        }
+        
+        if (this.giveUpBtn) {
+            this.giveUpBtn.addEventListener("click", () => this.giveUp());
+        }
+    }
 
-        gameBoard.newBoard(columns, "red");                  // Create new board based on selected size
-        const messageBox = document.getElementById("message-box"); // Get reference to message display area
-
-        // Update message box with game info (including difficulty if vs. computer)
-        messageBox.textContent = 
-            `New game started against ${opponent}${opponent === "computer" ? " (" + difficulty + " difficulty)" : ""} on a ${columns}-column board. Good luck!`;
-
-        // Start appropriate game mode based on opponent type
-        if (isComputerOpponent) setupPlayerVsComputer(difficulty);  // Initialize Player vs Computer mode
-        else setupPlayerVsPlayer();                                 // Initialize Player vs Player mode
-    });
-
+    startGame() {
+        const opponent = this.opponentSelect.value;
+        const difficulty = this.difficultySelect.value;
+        const columns = parseInt(this.columnsSelect.value);
+        const startingPlayer = this.startingPlayerSelect.value;
+    
+        this.game.board.newBoard(columns, startingPlayer);
+        this.game.board.currentPlayer = startingPlayer;
+        this.game.dice.rollButton.disabled = false;
+    
+        if (startingPlayer === "red") {
+            this.game.board.boardElement.classList.add("flipped");
+        } else {
+            this.game.board.boardElement.classList.remove("flipped");
+        }
+    
+        const messageBox = document.getElementById("message-box");
+        messageBox.textContent = `New game started against ${opponent}${
+            opponent === "computer" ? " (" + difficulty + " difficulty)" : ""
+        } on a ${columns}-column board. ${startingPlayer} starts!`;
+    
+        if (opponent === "computer") {
+            this.game.ai = new AIPlayer(this.game, difficulty);
+        } else {
+            this.game.ai = null;
+        }
+    }
+    
+    giveUp() {
+        const currentPlayer = this.game.board.currentPlayer;
+        const winner = currentPlayer === "blue" ? "red" : "blue";
+    
+        // Announce the winner
+        this.game.board.showMessage(`${currentPlayer} gave up! ${winner} wins!`);
+    
+        // Update scoreboard
+        this.game.updateScoreboard(winner);
+    
+        // Disable current interactions
+        this.game.disablePieceClicks();
+        if (this.game.dice?.rollButton) this.game.dice.rollButton.disabled = true;
+        if (this.game.skipTurnButton) this.game.skipTurnButton.disabled = true;
+    
+        // Automatically start a new game after pause (1s)
+        setTimeout(() => {
+            const opponent = this.opponentSelect.value;
+            const difficulty = this.difficultySelect.value;
+            const columns = parseInt(this.columnsSelect.value);
+            const startingPlayer = winner; 
+    
+            // Reset board and start a new match
+            this.game.board.newBoard(columns, startingPlayer);
+            this.game.board.currentPlayer = startingPlayer;
+    
+            // Flip the board if red starts
+            if (startingPlayer === "red") {
+                this.game.board.boardElement.classList.add("flipped");
+            } else {
+                this.game.board.boardElement.classList.remove("flipped");
+            }
+    
+            const messageBox = document.getElementById("message-box");
+            messageBox.textContent = `New game started automatically after ${currentPlayer} gave up. ${startingPlayer} starts!`;
+    
+            this.game.dice.rollButton.disabled = false;
+        }, 1000);
+}
+}
 /*
 // ================== DICE SECTION ==================
 
@@ -579,6 +710,131 @@ document.addEventListener("DOMContentLoaded", () => {
         messageBox.textContent = message; // Display the message in the message area
     });
 */
-// ================== AI LOGIC ==================
+    
+    const game = new Game(9, "blue");
+    const sidebar = new SidebarUI(game);
+    
 
 });
+
+// === AI MOVE EVALUATION AND EXECUTION ===
+class AIPlayer {
+    constructor(game, difficulty = "normal") {
+        this.game = game;
+        this.difficulty = difficulty;
+    }
+
+    async makeMove() {
+        const playerColor = this.game.board.currentPlayer;
+        const dice = this.game.diceResult;
+        let actionMessage = `${playerColor} (AI) rolled ${dice}. `;
+    
+        // Find all possible moves
+        const possibleMoves = [];
+        this.game.board.pieces.forEach((piece, index) => {
+            if (!piece || piece.color !== playerColor) return;
+            if (!piece.wasMoved && dice !== 1) return;
+    
+            const dest = this.game.getDestination(piece);
+            if (dest == null) return;
+    
+            const target = this.game.board.pieces[dest];
+            if (target && target.color === playerColor) return;
+    
+            const score = this.evaluateMove(piece, dest);
+            possibleMoves.push({ piece, dest, score, target });
+        });
+    
+        if (possibleMoves.length === 0) {
+            actionMessage += "No valid moves available — skipping turn.";
+            this.game.board.showMessage(actionMessage);
+            await new Promise(r => setTimeout(r, 1200));
+            this.game.skipTurn(true); //no duplicate message
+            return;
+        }
+    
+        // Choose best move or random (based on difficulty)
+        let chosenMove;
+        if (this.difficulty === "normal") {
+            chosenMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+        } else {
+            chosenMove = possibleMoves.reduce((best, m) => m.score > best.score ? m : best);
+        }
+    
+        await new Promise(r => setTimeout(r, 800)); // Pause for realism
+        if (!chosenMove.piece.wasMoved) chosenMove.piece.firstmove();
+    
+        // If capture, remove target before move
+        if (chosenMove.target && chosenMove.target.color !== playerColor) {
+            chosenMove.target.domElement.remove();
+            actionMessage += `Captured a ${chosenMove.target.color} piece. `;
+        } else {
+            actionMessage += "Moved a piece forward. ";
+        }
+    
+        this.game.movePieceForward(chosenMove.piece, chosenMove.dest);
+        this.game.disablePieceClicks();
+
+        const gameContinues = this.game.checkWinCondition();
+        if (!gameContinues) return; // stop AI immediately if game ended
+    
+        // Determine if AI rolls again or turn switches
+        if (dice === 1 || dice === 4 || dice === 6) {
+            actionMessage += "Gets another roll!";
+            this.game.board.showMessage(actionMessage);
+            await new Promise(r => setTimeout(r, 1200));
+            this.game.dice.rollDice();
+        } else {
+            actionMessage += "Turn ends.";
+            this.game.board.showMessage(actionMessage);
+            await new Promise(r => setTimeout(r, 1200));
+            this.game.switchTurn();
+            this.game.dice.rollButton.disabled = false;
+        }
+    }
+
+    evaluateMove(piece, destIndex) {
+        const opponent = piece.color === "red" ? "blue" : "red";
+        let score = 0;
+
+        const target = this.game.board.pieces[destIndex];
+        const row = Math.floor(destIndex / this.game.board.columns);
+
+        // CaptureValue
+        if (target && target.color === opponent) score += 100;
+
+        // NewPiece
+        if (!piece.wasMoved && this.game.diceResult === 1) score += 30;
+
+        // Closer to enemy back row
+        if (piece.color === "red") {
+            score += row * 10; // further down = better
+            if (row === this.game.board.rows - 1) score += 40;
+        } else {
+            score += (this.game.board.rows - 1 - row) * 10; // further up = better
+            if (row === 0) score += 40;
+        }
+
+        // SafetyPenalty, if enemy could capture next turn
+        const danger = this.isSquareThreatened(destIndex, opponent);
+        if (danger) score -= 20;
+
+        return score;
+    }
+
+    // Rough heuristic: if opponent could move into this square next turn
+    isSquareThreatened(destIndex, opponentColor) {
+        const potentialThreats = [];
+        for (let piece of this.game.board.pieces) {
+            if (!piece || piece.color !== opponentColor) continue;
+            const idx = this.game.board.pieces.indexOf(piece);
+            for (let d = 1; d <= 6; d++) {
+                this.game.diceResult = d;
+                const dest = this.game.getDestination(piece);
+                if (dest === destIndex) potentialThreats.push(piece);
+            }
+        }
+        this.game.diceResult = null; 
+        return potentialThreats.length > 0;
+    }
+}
