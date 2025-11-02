@@ -136,6 +136,7 @@ class Dice {
         return probabilities.length - 1;                        // Fallback: return last index
     }
 
+
     // === Rolls dice, updates image and message, and triggers callback ===
     rollDice() {
         this.rollButton.disabled = true;                       // Disable roll button to prevent multiple rolling
@@ -151,8 +152,18 @@ class Dice {
     updateDiceImage() {
         if (this.diceImage) {
             this.diceImage.src = `images/dice_${this.result}.png`; // Set dice image source
+
+
         }
-    }    
+    }
+
+    // == Function to reset image after player clicks on dice ==
+    resetDiceImage() {
+        if (this.diceImage) {
+            this.diceImage.src = "images/initial_dice.png"; // ← ou o nome da tua imagem inicial
+        }
+    }
+
 }
 
 // === Class representing the game logic and turn management ===
@@ -234,6 +245,7 @@ class Game {
         this.disablePieceClicks();            // Disable piece interactions
         this.switchTurn();                    // Switch to the other player
         this.dice.rollButton.disabled = false;
+        this.dice.resetDiceImage();
     }
 
     // === Makes all pieces clickable and sets click callback ===
@@ -299,6 +311,8 @@ class Game {
 
         this.disablePieceClicks();                                   // Disable further clicks until next turn
 
+        this.dice.resetDiceImage();
+
         if (!this.checkWinCondition()) return;                       // Check if the game is over
 
         // Determine if turn ends or player rolls again
@@ -307,7 +321,7 @@ class Game {
             this.switchTurn();
             this.diceResult = null;
             this.dice.rollButton.disabled = false;
-            this.board.showMessage(`Player${this.board.currentPlayer}'s turn! Roll the dice.`);
+            this.board.showMessage(`Player ${this.board.currentPlayer}'s turn! Roll the dice.`);
         } else if (this.extraMove) {
             this.diceResult = null;                                   // Reset dice for extra move
             this.dice.rollButton.disabled = false;
