@@ -20,7 +20,7 @@
 
 <body>
     <!-- ================== MAIN CONTENT ================== -->
-    <div class="main-content">
+    <div class="main-content" id ="main">
 
         <!-- ================== TOP BAR ================== -->
         <div class="top-bar">
@@ -62,7 +62,7 @@
         <hr class="divider"> <!-- Divider below board and dice section -->
 
         <!-- ================== RULES SECTION ================== -->
-        <div class="rules-section">
+        <div class="rules-section" id="rules">
 
             <details> <!-- Collapsible container for all rules -->
                 <summary>
@@ -136,7 +136,7 @@
 
 
         <!-- ================== SCOREBOARD ================== -->
-        <div class="scoreboard">
+        <div class="scoreboard" id = "score">
             <h2>Scoreboard</h2>
             <table>
                 <thead>
@@ -190,13 +190,23 @@
                         <option value="13">13</option>
                         <option value="15">15</option>
                     </select>
+                    
+                    <!-- Starting Player Selection -->
+                    <label id="StartingPlayerLabel">Starting Player:</label>
+                    <select id="StartingPlayerSelect">
+                        <option value="red">Red</option>
+                        <option value="blue">Blue</option>
+                    </select>
 
                     <!-- Start Game Button -->
-                    <button id="startGameBtn" class="start-btn">Start Game</button>
+                    <button id="startGameBtn" class="start-btn" type="button">Start Game</button>
+                    
                 </div>
             </details>
 
             <hr class="divider"> <!-- Divider line between sections -->
+            
+            <button id="giveUpBtn" class="give-up-btn">Give up</button>
 
             <!-- Sidebar navigation links -->
             <a href="#rules" class="sidebar-button">Rules</a>
