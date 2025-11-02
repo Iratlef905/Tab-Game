@@ -11,11 +11,13 @@ class Piece {
     // === Marks that the piece has made its first move ===
     firstmove() {
         this.wasMoved = true;                                // Updates the state to indicate movement
+        this.domElement.classList.add("moved"); // aplies 75% opacity
     }
 
     // === Marks that the piece has reached the last row ===
     reachedLastRow() {
         this.wasAlreadyInLastRow = true;                            // Updates the state to indicate the final position
+        this.domElement.classList.add("final"); // aplies 100%  opacity
     }
 
     // === Moves or places the piece visually on the board ===
@@ -79,6 +81,18 @@ class Board {
                 }
             }
         }
+
+        // = ADDED --> and  <-- to each place on the board
+        const cells = this.boardElement.querySelectorAll('.cell');
+        cells.forEach((cell, i) => {
+            const row = Math.floor(i / this.columns);
+            const arrow = document.createElement('span');
+            arrow.classList.add('arrow');
+            // adds an arrow to the cell, depending on the direction the pieces move in that line (-> for odd and <- for even)
+            arrow.textContent = row % 2 === 0 ? '←' : '→';
+            cell.appendChild(arrow);
+        })
+
         this.showPieces();                                           // Render all pieces on the board
     }
 
@@ -134,12 +148,12 @@ class Dice {
         return probabilities.length - 1;                        // Fallback: return last index
     }
 
+
     // === Rolls dice, updates image and message, and triggers callback ===
     rollDice() {
         this.rollButton.disabled = true;                       // Disable roll button to prevent multiple rolling
         this.result = this.rollWeightedDice();                 // Get weighted result
         this.updateDiceImage();                                // Update dice face in UI
-        this.message();                                        // Show message in UI
 
         let steps = this.result === 0 ? 6 : this.result;       // Treat 0 as 6 for movement
 
@@ -150,24 +164,18 @@ class Dice {
     updateDiceImage() {
         if (this.diceImage) {
             this.diceImage.src = `images/dice_${this.result}.png`; // Set dice image source
+
+
         }
     }
 
-    // === Displays a message in the UI depending on dice result ===
-    message() {
-        if (!this.messageBox) return;
-
-        let message = "";
-        switch (this.result) {
-            case 0: message = "🎲 It’s a 0, move 6 places. Play again!"; break;
-            case 1: message = "🎲 It’s a 1, move 1 place. Play again!"; break;
-            case 2: message = "🎲 It’s a 2, move 2 places."; break;
-            case 3: message = "🎲 It’s a 3, move 3 places."; break;
-            case 4: message = "🎲 It’s a 4, move 4 places. Play again!"; break;
+    // == Function to reset image after player clicks on dice ==
+    resetDiceImage() {
+        if (this.diceImage) {
+            this.diceImage.src = "images/initial_dice.png"; // ← ou o nome da tua imagem inicial
         }
-
-        this.messageBox.textContent = message;               // Update message box text
     }
+
 }
 
 // === Class representing the game logic and turn management ===
@@ -179,7 +187,7 @@ class Game {
         this.diceResult = null;                                        // Store result of last dice roll
         this.extraMove = false;                                        // Tracks if player can roll again
         this.dice.rollButton.disabled = false;                         // Enables the roll dice button
-        this.board.showMessage(`${this.board.currentPlayer} starts! Roll the dice.`); // Initial message
+        this.board.showMessage(`Player ${this.board.currentPlayer} starts! Roll the dice.`); // Initial message
         // === NEW: Skip Turn Button ===
         this.skipTurnButton = document.getElementById("skipTurnBtn");
         if (this.skipTurnButton) {
@@ -194,11 +202,53 @@ class Game {
 
         if (result === 1 || result === 4 || result === 6) {
             this.extraMove = true;                                     // Player gets an extra move
-            this.board.showMessage(`${this.board.currentPlayer} rolled ${result}. Move a piece and then roll again!`);
+            this.board.showMessage(`Player ${this.board.currentPlayer} rolled ${result}. Move a piece and then roll again!`);
         } else if (result === 2 || result === 3) {
             this.extraMove = false;                                    // Turn ends after next move
-            this.board.showMessage(`${this.board.currentPlayer} rolled ${result}. Move a piece, then turn ends.`);
+            this.board.showMessage(`Player ${this.board.currentPlayer} rolled ${result}. Move a piece, then turn ends.`);
         }
+
+        // Check if there are any available moves
+        const movesAvailable = this.hasAvailableMoves();
+
+        if (!movesAvailable && this.extraMove) {
+            // No moves possible, but player can roll again
+            this.board.showMessage(`Player ${this.board.currentPlayer} rolled ${result} but has no moves. Roll again!`);
+            this.dice.rollButton.disabled = false;  // Enable roll button for another turn
+            this.disablePieceClicks();               // No pieces to click
+            this.skipTurnButton.disabled = true;     // Skip button stays disabled
+        } else if (!movesAvailable && !this.extraMove) {
+            // No moves and no extra roll → allow skip turn
+            this.board.showMessage(`Player ${this.board.currentPlayer} has no possible moves. Click "Skip Turn" to continue the game.`);
+            this.skipTurnButton.disabled = false;
+            this.disablePieceClicks();
+        } else {
+            // Moves available → enable piece clicks
+            this.enablePieceClicks();
+            this.skipTurnButton.disabled = true;
+        }
+    }
+
+    // === Checks if the current player has any possible move ===
+    hasAvailableMoves() {
+        const playerColor = this.board.currentPlayer;
+        return this.board.pieces.some(piece => {
+            if (!piece || piece.color !== playerColor) return false;
+            if (!piece.wasMoved && this.diceResult !== 1) return false;
+
+            const choices = this.decidingPoint(piece);
+            if (choices && Array.isArray(choices)) {
+                return choices.some(idx => {
+                    if (idx == null) return false;
+                    const targetPiece = this.board.pieces[idx];
+                    return !targetPiece || targetPiece.color !== playerColor;
+                });
+            }
+            const destination = this.getDestination(piece);
+            const targetPiece = this.board.pieces[destination];
+            return !targetPiece || targetPiece.color !== playerColor;
+        });
+    }
 
         // Check if there are any available moves
         const movesAvailable = this.hasAvailableMoves();
@@ -252,6 +302,7 @@ class Game {
         this.disablePieceClicks();            // Disable piece interactions
         this.switchTurn();                    // Switch to the other player
         this.dice.rollButton.disabled = false;
+        this.dice.resetDiceImage();
     }
 
     // === Makes all pieces clickable and sets click callback ===
@@ -317,6 +368,8 @@ class Game {
 
         this.disablePieceClicks();                                   // Disable further clicks until next turn
 
+        this.dice.resetDiceImage();
+
         if (!this.checkWinCondition()) return;                       // Check if the game is over
 
         // Determine if turn ends or player rolls again
@@ -325,11 +378,11 @@ class Game {
             this.switchTurn();
             this.diceResult = null;
             this.dice.rollButton.disabled = false;
-            this.board.showMessage(`${this.board.currentPlayer}'s turn! Roll the dice.`);
+            this.board.showMessage(`Player ${this.board.currentPlayer}'s turn! Roll the dice.`);
         } else if (this.extraMove) {
             this.diceResult = null;                                   // Reset dice for extra move
             this.dice.rollButton.disabled = false;
-            this.board.showMessage(`${this.board.currentPlayer} can roll again!`);
+            this.board.showMessage(`Player ${this.board.currentPlayer} can roll again!`);
         }
     }
 
@@ -451,16 +504,18 @@ class Game {
         let row = Math.floor(destination / this.board.columns);
         let col = destination % this.board.columns;
 
+        // because piece has reached final row changes opacity to 100%
         if ((piece.color === "blue" && row === 0) ||
             (piece.color === "red" && row === this.board.rows - 1)){
                 piece.reachedLastRow();
             }
 
+
         this.board.pieces[index] = null;                           // Remove piece from old position
         this.board.pieces[destination] = piece;                    // Place piece in new position
 
         const cell = this.board.cells[row][col];
-        piece.animate(cell);                                       // Update DOM
+        piece.animate(cell); // Update DOM
     }
 
     // === Removes all highlights and click handlers from decision cells ===
@@ -481,7 +536,7 @@ class Game {
             this.board.boardElement.classList.remove("flipped");
         }
     
-        this.board.showMessage(`${this.board.currentPlayer}'s turn! Roll the dice.`);
+        this.board.showMessage(`Player ${this.board.currentPlayer}'s turn! Roll the dice.`);
     
         // ✅ AI auto-rolls if it's its turn
         if (this.ai && this.board.currentPlayer === "red") {
