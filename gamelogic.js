@@ -2,20 +2,20 @@
 class Piece {
     constructor(color) {
         this.color = color;                               // Stores the color of the piece ("red" or "blue")
-        this.moved = false;                               // Tracks whether the piece has moved yet
-        this.isLastRow = false;                           // Indicates if the piece has reached the final row
+        this.wasMoved = false;                               // Tracks whether the piece has moved yet
+        this.wasAlreadyInLastRow = false;                           // Indicates if the piece has reached the final row
         this.domElement = document.createElement("div");  // Creates the visual DOM element for the piece
         this.domElement.classList.add("piece", this.color); // Applies base "piece" class and color-specific styling
     }
 
     // === Marks that the piece has made its first move ===
     firstmove() {
-        this.moved = true;                                // Updates the state to indicate movement
+        this.wasMoved = true;                                // Updates the state to indicate movement
     }
 
     // === Marks that the piece has reached the last row ===
     reachedLastRow() {
-        this.isLastRow = true;                            // Updates the state to indicate the final position
+        this.wasAlreadyInLastRow = true;                            // Updates the state to indicate the final position
     }
 
     // === Moves or places the piece visually on the board ===
@@ -136,13 +136,14 @@ class Dice {
 
     // === Rolls dice, updates image and message, and triggers callback ===
     rollDice() {
+        this.rollButton.disabled = true;                       // Disable roll button to prevent multiple rolling
         this.result = this.rollWeightedDice();                 // Get weighted result
-        this.updateDiceImage();                                 // Update dice face in UI
-        this.message();                                         // Show message in UI
+        this.updateDiceImage();                                // Update dice face in UI
+        this.message();                                        // Show message in UI
 
         let steps = this.result === 0 ? 6 : this.result;       // Treat 0 as 6 for movement
 
-        if (this.onRoll) this.onRoll(steps);                  // Call game callback with steps
+        if (this.onRoll) this.onRoll(steps);                   // Call game callback with steps
     }
 
     // === Updates the dice image to match the last result ===
@@ -177,7 +178,14 @@ class Game {
         this.dice = new Dice((result) => this.onDiceRolled(result));   // Create Dice instance with callback
         this.diceResult = null;                                        // Store result of last dice roll
         this.extraMove = false;                                        // Tracks if player can roll again
+        this.dice.rollButton.disabled = false;                         // Enables the roll dice button
         this.board.showMessage(`${this.board.currentPlayer} starts! Roll the dice.`); // Initial message
+        // === NEW: Skip Turn Button ===
+        this.skipTurnButton = document.getElementById("skipTurnBtn");
+        if (this.skipTurnButton) {
+            this.skipTurnButton.addEventListener("click", () => this.skipTurn());
+            this.skipTurnButton.disabled = true; // initially disabled
+        }
     }
 
     // === Handles dice result and determines if extra move is allowed ===
@@ -192,7 +200,55 @@ class Game {
             this.board.showMessage(`${this.board.currentPlayer} rolled ${result}. Move a piece, then turn ends.`);
         }
 
-        this.enablePieceClicks();                                       // Activate clickable pieces for this turn
+        // Check if there are any available moves
+        const movesAvailable = this.hasAvailableMoves();
+
+        if (!movesAvailable && this.extraMove) {
+            // No moves possible, but player can roll again
+            this.board.showMessage(`${this.board.currentPlayer} rolled ${result} but has no moves. Roll again!`);
+            this.dice.rollButton.disabled = false;  // Enable roll button for another turn
+            this.disablePieceClicks();               // No pieces to click
+            this.skipTurnButton.disabled = true;     // Skip button stays disabled
+        } else if (!movesAvailable && !this.extraMove) {
+            // No moves and no extra roll → allow skip turn
+            this.board.showMessage(`${this.board.currentPlayer} has no possible moves. Click "Skip Turn" to continue.`);
+            this.skipTurnButton.disabled = false;
+            this.disablePieceClicks();
+        } else {
+            // Moves available → enable piece clicks
+            this.enablePieceClicks();
+            this.skipTurnButton.disabled = true;
+        }
+    }
+
+    // === Checks if the current player has any possible move ===
+    hasAvailableMoves() {
+        const playerColor = this.board.currentPlayer;
+        return this.board.pieces.some(piece => {
+            if (!piece || piece.color !== playerColor) return false;
+            if (!piece.wasMoved && this.diceResult !== 1) return false;
+
+            const choices = this.decidingPoint(piece);
+            if (choices && Array.isArray(choices)) {
+                return choices.some(idx => {
+                    if (idx == null) return false;
+                    const targetPiece = this.board.pieces[idx];
+                    return !targetPiece || targetPiece.color !== playerColor;
+                });
+            }
+            const destination = this.getDestination(piece);
+            const targetPiece = this.board.pieces[destination];
+            return !targetPiece || targetPiece.color !== playerColor;
+        });
+    }
+
+    // === Allows player to skip their turn if no moves are available ===
+    skipTurn() {
+        this.skipTurnButton.disabled = true;  // Disable button again
+        this.diceResult = null;               // Reset dice
+        this.disablePieceClicks();            // Disable piece interactions
+        this.switchTurn();                    // Switch to the other player
+        this.dice.rollButton.disabled = false;
     }
 
     // === Makes all pieces clickable and sets click callback ===
@@ -224,6 +280,15 @@ class Game {
             return;
         }
 
+        if(!piece.wasMoved && this.diceResult !== 1){
+            this.board.showMessage("You can only make the first move of a piece after rolling a 1!");
+            return;
+        }
+
+        if(!piece.wasMoved) {
+            piece.firstmove();
+        }
+
         let destination = this.getDestination(piece);                // Calculate target cell index
 
         const targetPiece = this.board.pieces[destination];          // Check if target cell is occupied
@@ -235,17 +300,14 @@ class Game {
         }
 
         const choices = this.decidingPoint(piece);                   // Check if piece is at a decision point
+        if (choices && choices[0] != null && choices[1] === null){
+            destination = choices[0];
+        }
 
-        if (choices) {
-            // Highlight possible cells and wait for player click
-            choices.forEach(idx => {
-                const cell = this.board.cells[Math.floor(idx / this.board.columns)][idx % this.board.columns];
-                cell.classList.add("highlight");
-                cell.onclick = () => {
-                    this.disableHighlights();                       // Clear highlights after choice
-                    this.movePieceForward(piece, idx);              // Move piece to chosen cell
-                };
-            });
+        if (choices && choices[1] != null) {
+            const chosenIndex = await this.waitForChoice(choices, piece);
+            this.disableHighlights();
+            this.movePieceForward(piece, chosenIndex);
         } else {
             this.movePieceForward(piece, destination);               // Move piece normally
         }
@@ -259,9 +321,11 @@ class Game {
             await new Promise(resolve => setTimeout(resolve, 1500)); // Small pause before switching turn
             this.switchTurn();
             this.diceResult = null;
+            this.dice.rollButton.disabled = false;
             this.board.showMessage(`${this.board.currentPlayer}'s turn! Roll the dice.`);
         } else if (this.extraMove) {
             this.diceResult = null;                                   // Reset dice for extra move
+            this.dice.rollButton.disabled = false;
             this.board.showMessage(`${this.board.currentPlayer} can roll again!`);
         }
     }
@@ -276,15 +340,30 @@ class Game {
 
         // --- Blue decision logic: from row 1 to 0, give two possible destinations ---
         if (piece.color === "blue" && row === 1 && Math.floor(destination / this.board.columns) === 0) {
+            if (piece.wasAlreadyInLastRow) return [destination + 2 * this.board.columns, null];   //if piece was in last row already return only the destination a row back
             return [destination, destination + 2 * this.board.columns]; // Original + alternative path
         }
 
         // --- Red decision logic: from row 2 to 3, give two possible destinations ---
         if (piece.color === "red" && row === 2 && Math.floor(destination / this.board.columns) === 3) {
+            if (piece.wasAlreadyInLastRow) return [destination - 2 * this.board.columns, null];   //if piece was in last row already return only the destination a row back
             return [destination, destination - 2 * this.board.columns]; // Original + alternative path
         }
 
         return null;                                                // No decision point
+    }
+
+    waitForChoice(choices, piece) {
+        return new Promise((resolve) => {
+            choices.forEach(idx => {
+                const cell = this.board.cells[Math.floor(idx / this.board.columns)][idx % this.board.columns];
+                cell.classList.add("highlight");
+                this.board.showMessage("Please choose one of the highlighted options to move");
+                cell.onclick = () => {
+                    resolve(idx);
+                };
+            });
+        });
     }
 
 
@@ -368,16 +447,11 @@ class Game {
         const index = this.board.pieces.indexOf(piece);
         let row = Math.floor(destination / this.board.columns);
         let col = destination % this.board.columns;
-        
 
-        // ============ NEW CODE FOR CHECKING IF PIECE HAS BEEN TO LAST ROW ============== //
-        if (piece.isLastRow) { // checks if the piece already been in last row, and if so stops it
-            if ((piece.color === "red" && row === this.board.rows - 1) ||
-                (piece.color === "blue" && row === 0)) {
-                this.board.showMessage("That piece has been to the final row, so it can´t enter again!");
-                return; // cancels the move
+        if ((piece.color === "blue" && row === 0) ||
+            (piece.color === "red" && row === this.board.rows - 1)){
+                piece.reachedLastRow();
             }
-        }
 
         this.board.pieces[index] = null;                           // Remove piece from old position
         this.board.pieces[destination] = piece;                    // Place piece in new position
@@ -490,4 +564,3 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================== AI LOGIC ==================
 
 });
-

@@ -565,6 +565,27 @@ summary:hover h2 {
     box-shadow: 0 0 8px var(--shadow);
 }
 
+#skipTurnBtn {
+    background: var(--button-color);
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--text-color2);
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+#skipTurnBtn:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+#skipTurnBtn:hover {
+    background: var(--hover-color);
+    box-shadow: 0 0 8px var(--shadow);
+}
+
 /* Sidebar buttons */
 .sidebar-button {
     width: 100%;
