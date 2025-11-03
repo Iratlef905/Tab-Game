@@ -520,6 +520,7 @@ summary:hover h2 {
   transform: translateY(-50%);
   font-size: 1.5rem;
   color: rgba(0, 0, 0, 0.4);
+  pointer-events: none;
 }
 
 .cell .arrow.right {
@@ -536,24 +537,28 @@ summary:hover h2 {
     width: 35px;
     height: 35px;
     border-radius: 50%;
-    opacity: 0.5;
+    opacity: 0.65;
     transition: opacity 0.3s ease;
 }
 
 .piece.moved {
-    opacity: 0.75;
-}
-
-.piece.final {
     opacity: 1;
 }
 
+.piece.blue.final {
+    background-color: #011c61;
+}
+
+.piece.red.final {
+    background-color: #6e0000;
+}
+
 .blue {
-    background-color: #3a6ff7;
+    background-color: #003acd;
 }
 
 .red {
-    background-color: #e14a4a;
+    background-color: #d30000;
 }
 
 
