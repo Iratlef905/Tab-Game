@@ -125,7 +125,6 @@ class Dice {
     constructor(onRoll) {
         this.rollButton = document.getElementById("rollDiceBtn"); // Button to roll the dice
         this.diceImage = document.getElementById("dice-image");   // Image element to show dice face
-        this.messageBox = document.getElementById("message-box"); // Message box for feedback
 
         this.result = null;                                      // Stores last dice result
         this.onRoll = onRoll;                                    // Callback to execute after rolling
@@ -137,8 +136,7 @@ class Dice {
 
     // === Rolls the dice according to a weighted probability distribution ===
     rollWeightedDice() {
-//        const probabilities = [0.06, 0.25, 0.38, 0.25, 0.06];  // Probabilities for 0–4
-        const probabilities = [0.01, 0.99];
+        const probabilities = [0.06, 0.25, 0.38, 0.25, 0.06];  // Probabilities for 0–4
         const random = Math.random();                           // Random number between 0 and 1
         let cumulative = 0;
 
@@ -321,7 +319,6 @@ class Game {
         }
 
         if (choices && choices[1] != null) {
-            this.board.showMessage("in choices if 1: ");
             if((this.board.pieces[choices[0]] && this.board.pieces[choices[0]].color === this.board.currentPlayer) 
                 && (this.board.pieces[choices[1]] && this.board.pieces[choices[1]].color === this.board.currentPlayer)) {
                 this.board.showMessage("You can't move onto your own piece!");
@@ -424,10 +421,6 @@ class Game {
         });
     }
 
-
-
-
-    // ========== CHANGED A FEW THINGS HERE ============ //
     // === Checks if either player has won the game and updates scoreboard ===
     checkWinCondition() {
         let hasRed = false, hasBlue = false;
@@ -635,6 +628,13 @@ class SidebarUI {
         } else {
             this.game.ai = null;
         }
+        if (this.game.ai && this.game.board.currentPlayer === "red") {
+            console.log("detected");
+            this.game.dice.rollButton.disabled = true; // Disable human roll
+            setTimeout(() => this.game.dice.rollDice(), 1500); // AI rolls automatically
+        } else {
+            this.game.dice.rollButton.disabled = false; // Enable for human
+        }
     }
     
     giveUp() {
@@ -689,14 +689,16 @@ class AIPlayer {
     async makeMove() {
         const playerColor = this.game.board.currentPlayer;
         const dice = this.game.diceResult;
-        let actionMessage = `${playerColor} (AI) rolled ${dice}. `;
+        let actionMessage = `Red (AI) rolled ${dice}. `;
     
         // Find all possible moves
         const possibleMoves = [];
         this.game.board.pieces.forEach((piece, index) => {
             if (!piece || piece.color !== playerColor) return;
             if (!piece.wasMoved && dice !== 1) return;
-    
+            // Skip move if piece is blocked by start-row rule
+            if (this.game.isBlockedByStartRow(piece)) return;
+
             const dest = this.game.getDestination(piece);
             if (dest == null) return;
     
@@ -707,11 +709,15 @@ class AIPlayer {
             possibleMoves.push({ piece, dest, score, target });
         });
     
+
         if (possibleMoves.length === 0) {
-            actionMessage += "No valid moves available — skipping turn.";
-            this.game.board.showMessage(actionMessage);
-            await new Promise(r => setTimeout(r, 1500));
-            this.game.skipTurn(true); //no duplicate message
+            if ([1,4,6].includes(dice)) {
+                await new Promise(r => setTimeout(r, 2000));
+                this.game.dice.rollDice(); 
+            } else {
+                await new Promise(r => setTimeout(r, 2000));
+                this.game.skipTurn(true);
+            }
             return;
         }
     
@@ -751,6 +757,7 @@ class AIPlayer {
             this.game.board.showMessage(actionMessage);
             await new Promise(r => setTimeout(r, 1500));
             this.game.switchTurn();
+            this.dice.resetDiceImage();
             this.game.dice.rollButton.disabled = false;
         }
     }
@@ -810,5 +817,5 @@ document.addEventListener("DOMContentLoaded", () => {
     game.setModeComputer("normal");
     game.ai = new AIPlayer(game, "normal"); 
 
-    game.board.showMessage("New game started: Player (Blue) vs AI (Red). Blue starts!");
+    game.board.showMessage("Default game started: Player (Blue) vs AI (Red). Blue starts! Start customizable game via sidebar.");
 });

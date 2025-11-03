@@ -128,6 +128,10 @@ h1 {
     /* Height of the top bar: 6 times the relative size defines as rem in the Root */
 }
 
+.spacer {
+    width: 10rem;
+}
+
 /* Style the main heading inside the top bar */
 .top-bar h1 {
     margin: 0 auto;
