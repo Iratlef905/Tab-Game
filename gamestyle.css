@@ -38,6 +38,7 @@
     --border-color: #00A2A2; /* Border color for inputs, cards, and buttons */
     --button-color: #00A2A2; /* Default background color for clickable buttons */
     --hover-color: #5ACFD7; /* Hover or highlight color for interactive elements */
+    --bullet-points: #5ACFD7; /* Lighter cyan for bullet points */
 
     /* =========================
        Spacing & sizing
@@ -251,11 +252,11 @@ h1 {
 }
 
 .rules-points ul li:nth-child(odd)::marker {
-    color: #3153c2; /* Blue bullet for odd items */
+    color: var(--bullet-points); /* Cyan bullet for odd items */
 }
 
 .rules-points ul li:nth-child(even)::marker {
-    color: red; /* Red bullet for even items */
+    color: var(--bullet-points); /* Cyan bullet for even items */
 }
 
 /* Details spacing */
