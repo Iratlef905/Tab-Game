@@ -218,9 +218,10 @@ h1 {
     /* Rounded corners for modern look */
     text-align: center;
     /* Center content horizontally */
+    height: 3rem;
 }
 
-/* Specific styling for the board Field to be able to also contain the messages field and the Setting */
+/* Specific styling for the board Field to be able to also contain the messages field */
 .field.board {
     display: grid;
     grid-template-columns: 1fr;
@@ -511,6 +512,9 @@ summary:hover h2 {
 .cell.highlight {
     border: 3px solid yellow;
     box-shadow: 0 0 10px yellow;
+    position: relative;                    
+    z-index: 10;                            
+    cursor: pointer;                            
 }
 
 /* ADDED ARROWS TO BOARD CELLS */

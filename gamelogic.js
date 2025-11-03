@@ -137,7 +137,8 @@ class Dice {
 
     // === Rolls the dice according to a weighted probability distribution ===
     rollWeightedDice() {
-        const probabilities = [0.06, 0.25, 0.38, 0.25, 0.06];  // Probabilities for 0–4
+//        const probabilities = [0.06, 0.25, 0.38, 0.25, 0.06];  // Probabilities for 0–4
+        const probabilities = [0.01, 0.99];
         const random = Math.random();                           // Random number between 0 and 1
         let cumulative = 0;
 
@@ -238,6 +239,7 @@ class Game {
         return this.board.pieces.some(piece => {
             if (!piece || piece.color !== playerColor) return false;
             if (!piece.wasMoved && this.diceResult !== 1) return false;
+            if (this.isBlockedByStartRow(piece)) return false;
 
             const choices = this.decidingPoint(piece);
             if (choices && Array.isArray(choices)) {
@@ -297,11 +299,45 @@ class Game {
             return;
         }
 
+        if (this.isBlockedByStartRow(piece)) {
+            this.board.showMessage("You cannot move pieces in the last row while you have pieces in the start row.");
+            return;
+        }
+
         if(!piece.wasMoved) {
             piece.firstmove();
         }
 
         let destination = this.getDestination(piece);                // Calculate target cell index
+
+        let choices = this.decidingPoint(piece);                   // Check if piece is at a decision point
+
+        if (choices && choices[0] != null && choices[1] === null){
+            if(this.board.pieces[choices[0]] && this.board.pieces[choices[0]].color === this.board.currentPlayer) {
+                this.board.showMessage("You can't move onto your own piece!");
+                return;
+            }
+            destination = choices[0];
+        }
+
+        if (choices && choices[1] != null) {
+            this.board.showMessage("in choices if 1: ");
+            if((this.board.pieces[choices[0]] && this.board.pieces[choices[0]].color === this.board.currentPlayer) 
+                && (this.board.pieces[choices[1]] && this.board.pieces[choices[1]].color === this.board.currentPlayer)) {
+                this.board.showMessage("You can't move onto your own piece!");
+                return;
+            }
+            if(choices[1] && this.board.pieces[choices[0]] && this.board.pieces[choices[0]].color === this.board.currentPlayer) {
+                choices = [choices[1]];
+            } 
+            if(choices[1] && this.board.pieces[choices[1]] && this.board.pieces[choices[1]].color === this.board.currentPlayer) {
+                choices = [choices[0]];
+            }
+
+            const chosenIndex = await this.waitForChoice(choices);
+            this.disableHighlights();
+            destination = chosenIndex;
+        }
 
         const targetPiece = this.board.pieces[destination];          // Check if target cell is occupied
         if (targetPiece && targetPiece.color !== this.board.currentPlayer) {
@@ -311,18 +347,7 @@ class Game {
             return;
         }
 
-        const choices = this.decidingPoint(piece);                   // Check if piece is at a decision point
-        if (choices && choices[0] != null && choices[1] === null){
-            destination = choices[0];
-        }
-
-        if (choices && choices[1] != null) {
-            const chosenIndex = await this.waitForChoice(choices, piece);
-            this.disableHighlights();
-            this.movePieceForward(piece, chosenIndex);
-        } else {
-            this.movePieceForward(piece, destination);               // Move piece normally
-        }
+        this.movePieceForward(piece, destination);               // Move piece normally
 
         this.disablePieceClicks();                                   // Disable further clicks until next turn
 
@@ -342,6 +367,25 @@ class Game {
             this.dice.rollButton.disabled = false;
             this.board.showMessage(`Player ${this.board.currentPlayer} can roll again!`);
         }
+    }
+
+    // === Checks if a piece is blocked because other pieces are in start row ===
+    isBlockedByStartRow(piece) {
+        const playerColor = piece.color;
+        const startRow = playerColor === "blue" ? 3 : 0;  
+        const lastRow = playerColor === "blue" ? 0 : 3; 
+
+        const index = this.board.pieces.indexOf(piece);
+        const row = Math.floor(index / this.board.columns);
+        if (row !== lastRow) return false;
+
+        const hasStartRowPieces = this.board.pieces.some((p, idx) => {
+            if (!p || p.color !== playerColor) return false;
+            const r = Math.floor(idx / this.board.columns);
+            return r === startRow;
+        });
+
+        return hasStartRowPieces;
     }
 
     // === Determines if a piece is at a decision point and returns alternative destinations ===
@@ -367,7 +411,7 @@ class Game {
         return null;                                                // No decision point
     }
 
-    waitForChoice(choices, piece) {
+    waitForChoice(choices) {
         return new Promise((resolve) => {
             choices.forEach(idx => {
                 const cell = this.board.cells[Math.floor(idx / this.board.columns)][idx % this.board.columns];
@@ -379,6 +423,8 @@ class Game {
             });
         });
     }
+
+
 
 
     // ========== CHANGED A FEW THINGS HERE ============ //
