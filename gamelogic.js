@@ -785,6 +785,71 @@ class AIPlayer {
     }
 }
 
+class ServerRequests {
+
+    //constuctor
+    constructor() {
+        this.url = "http://twserver.alunos.dcc.fc.up.pt:8008/";
+    }
+
+    // helpers
+    async _post(endpoint, obj) {
+        const r = await fetch(this.url + endpoint, {
+            method: "POST",
+            body: JSON.stringify(obj)
+        });
+        return r.json();
+    }
+
+    async _get(endpoint) {
+        const r = await fetch(this.url + endpoint);
+        return r.json();
+    }
+
+    async register(nick, password) {
+        return this._post("register", { nick, password });
+    }
+
+    async join(group, nick, password, size) {
+        return this._post("join", { group, nick, password, size });
+    }
+
+    async leave(nick, password, game) {
+        return this._post("leave", { nick, password, game });
+    }
+
+    async roll(nick, password, game) {
+        return this._post("roll", { nick, password, game });
+    }
+
+    async pass(nick, password, game) {
+        return this._post("pass", { nick, password, game });
+    }
+
+    async notify(nick, password, game, cell) {
+        return this._post("notify", { nick, password, game, cell });
+    }
+
+    async update(nick, game) {
+        return this._get(`update?nick=${nick}&game=${game}`);
+    }
+
+    async ranking(group, size) {
+        return this._get(`ranking?group=${group}&size=${size}`);
+    }
+
+/*
+    register(nick, password){}
+    join(group, nick, password, size){}
+    leave(nick, password, game){}
+    roll(nick, password, game){}
+    pass(nick, password, game){}
+    notify(nick, password, game, cell){}
+    update(nick, game){}
+    ranking(group, size){}
+*/
+}
+
 // === Initialize game and sidebar when DOM is ready ===
 document.addEventListener("DOMContentLoaded", () => {
     const game = new Game(9, "blue");              // Default board with 9 columns, blue starts
