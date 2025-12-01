@@ -1,686 +1,616 @@
 /* Import custom fonts from external sources */
-@import url('https://fonts.cdnfonts.com/css/myriad-pro');
-@import url('https://fonts.cdnfonts.com/css/edo-sz');
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-
+@import url('https://fonts.cdnfonts.com/css/myriad-pro'); /* Myriad Pro font for body and UI text */
+@import url('https://fonts.cdnfonts.com/css/edo-sz'); /* Edo Sz font for stylized headings, details, rules */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap'); /* Bebas Neue for scoreboards and highlights */
 
 :root {
     /* =========================
-     Base font & sizing
-     ========================= */
-    font-size: 16px;
-    /* Root font size for rem units throughout the project */
-    --standard-font: Arial, Helvetica, sans-serif;
-    /* Default body font */
-    --standard-fontsize: 1.5rem;
-    /* Default font size for body text */
+       Base font & sizing
+       ========================= */
+    font-size: 16px; /* Base font size used as 1rem reference throughout the project */
+    --standard-font: Arial, Helvetica, sans-serif; /* Default font family for body content and general text */
+    --standard-fontsize: 1.5rem; /* Standard font size for body text, scalable via rem */
 
     /* =========================
-     Background colors
-     ========================= */
-    --background-color: #000000;
-    /* Main page background */
-    --background-color2: #222222;
-    /* Secondary background: sidebar, fields, etc. */
+       Background colors
+       ========================= */
+    --background-color: #000000; /* Main page background, used for body and large sections */
+    --background-color2: #222222; /* Secondary background for sidebars, panels, and input fields */
 
     /* =========================
-     Text colors
-     ========================= */
-    --text-color: #FFFFFF;
-    /* Primary text color */
-    --text-color2: #000000;
-    /* Text on light backgrounds */
+       Text colors
+       ========================= */
+    --text-color: #FFFFFF; /* Primary text color for dark backgrounds */
+    --text-color2: #000000; /* Secondary text color for light backgrounds or buttons */
 
     /* =========================
-     Header typography
-     ========================= */
-    --header-font: Verdana, Geneva, Tahoma, sans-serif;
-    /* Heading font stack */
-    --header-color: #00A2A2;
-    /* Primary heading color */
-    --header-3d-effect: #5ACFD7;
-    /* Shadow/3D accent color */
-    --shadow: #FFFFFF;
-    /* General text shadow / glow */
+       Header typography
+       ========================= */
+    --header-font: Verdana, Geneva, Tahoma, sans-serif; /* Font stack for headings */
+    --header-color: #00A2A2; /* Main color for headers, cyan tone */
+    --header-3d-effect: #5ACFD7; /* Lighter cyan for layered text-shadow effect */
+    --shadow: #FFFFFF; /* Generic text-shadow/glow color for emphasis */
 
     /* =========================
-     Accent & UI colors
-     ========================= */
-    --seperator-lines: #00A2A2;
-    /* Divider and separator lines */
-    --border-color: #00A2A2;
-    /* Borders for fields/inputs/buttons */
-    --button-color: #00A2A2;
-    /* Default button background */
-    --hover-color: #5ACFD7;
-    /* Button hover or highlight color */
+       Accent & UI colors
+       ========================= */
+    --seperator-lines: #00A2A2; /* Color for dividers and horizontal rules */
+    --border-color: #00A2A2; /* Border color for inputs, cards, and buttons */
+    --button-color: #00A2A2; /* Default background color for clickable buttons */
+    --hover-color: #5ACFD7; /* Hover or highlight color for interactive elements */
+    --bullet-points: #5ACFD7; /* Lighter cyan for bullet points */
 
     /* =========================
-     Spacing & sizing
-     ========================= */
-    --space-xs: 0.25rem;
-    /* Extra small spacing */
-    --space-sm: 0.5rem;
-    /* Small spacing */
-    --space-md: 1.2rem;
-    /* Medium spacing (used for main content, padding, gap) */
-    --space-lg: 2rem;
-    /* Large spacing */
+       Spacing & sizing
+       ========================= */
+    --space-xs: 0.25rem; /* Extra small spacing for tight padding/margin */
+    --space-sm: 0.5rem; /* Small spacing for minor gaps */
+    --space-md: 1.2rem; /* Medium spacing used for main content, padding, and grid gaps */
+    --space-lg: 2rem; /* Large spacing for broader layout separation */
 
     /* =========================
-     Border radius
-     ========================= */
-    --radius-sm: 0.3rem;
-    /* Small rounded corners (buttons, inputs) */
-    --radius-md: 0.5rem;
-    /* Medium rounded corners (fields, cards) */
+       Border radius
+       ========================= */
+    --radius-sm: 0.3rem; /* Small rounded corners for inputs and compact buttons */
+    --radius-md: 0.5rem; /* Medium rounded corners for cards or field containers */
+    --radius-lg: 0.75rem; /* Optional large rounding for special elements like modals or headers */
 }
 
-
-/* Global styles for the whole page */
+/* Global page styling */
 body {
-    background-color: var(--background-color);
-    /* Background for the page */
-    color: var(--text-color);
-    /* Default text color */
-    font-family: var(--standard-font);
-    /* Defenition of font family */
-    font-size: var(--standard-fontsize);
-    /* Default text size, 1.5x standard */
-    margin: 0rem;
-    /* Space around the body content (default would be 8px)*/
+    background-color: var(--background-color); /* Main background for entire page */
+    color: var(--text-color); /* Default text color */
+    font-family: var(--standard-font); /* Apply base font */
+    font-size: var(--standard-fontsize); /* Set default font size */
+    margin: 0; /* Remove default browser margin for consistent layout */
 }
 
 /* Main page heading */
 h1 {
-    color: var(--header-color);
-    /* Color for heading */
-    font-size: 4rem;
-    /* Large heading size */
-    font-family: var(--header-font);
-    /* Font stack for heading */
-    text-align: center;
-    /* Center the heading horizontally */
-    text-shadow:
-        /* Adds a layered glow/3D effect */
-        1px 1px 0 var(--header-3d-effect),
-        /* Light shadow offset by 1px */
-        2px 2px 0 var(--header-3d-effect),
-        /* Light shadow offset by 2px */
-        0 0 5rem var(--shadow);
-    /* Glow effect around the text */
+    color: var(--header-color); /* Primary heading color */
+    font-size: 4rem; /* Large font size for page title */
+    font-family: var(--header-font); /* Apply header font stack */
+    text-align: center; /* Center horizontally within its container */
+    text-shadow: 1px 1px 0 var(--header-3d-effect), 2px 2px 0 var(--header-3d-effect), 0 0 5rem var(--shadow); /* Layered 3D glow effect with cyan highlights */
 }
 
-
-/* Main content section inside the grid */
+/* Main content container */
 .main-content {
-    padding: 1.2rem;
-    /* Space inside the main content container */
+    padding: var(--space-md); /* Medium padding around content for spacing consistency */
 }
 
-/* Top bar at the top: Login form on the left, heading on the right */
+/* Top bar: horizontal layout for login form and main heading */
 .top-bar {
-    display: flex;
-    /* Use flexbox to arrange children horizontally */
-    align-items: center;
-    /* Vertically center items within the top bar */
-    height: 6rem;
-    /* Height of the top bar: 6 times the relative size defines as rem in the Root */
+    display: flex; /* Use flexbox for horizontal arrangement */
+    align-items: center; /* Vertically center elements within the bar */
+    height: 6rem; /* Fixed height for consistent top bar layout */
 }
 
-/* Style the main heading inside the top bar */
+.spacer {
+    width: 10rem; /* Horizontal spacing element to separate items in top bar */
+}
+
 .top-bar h1 {
-    margin: 0 auto;
-    /* Horizontally center the heading within the top bar */
+    margin: 0 auto; /* Center the heading horizontally within the top bar */
 }
 
 /* Sidebar styling */
 .sidebar {
-    background: var(--background-color2);
-    /* Dark background for the sidebar, color comes from a CSS variable */
-    padding: 1.2rem;
-    /* Inner spacing inside the sidebar */
-    position: fixed;
-    /* Fixed position to stay visible during scrolling */
-    top: 0;
-    /* Stick at the very top of the viewport */
-    right: -12rem;
-    /* Start hidden outside the right edge of the screen (adjust width if needed) */
-    width: 10rem;
-    /* Set the sidebar width */
-    height: 100dvh;
-    /* Full dynamic viewport height */
-    overflow-y: auto;
-    /* Enable vertical scrolling if content overflows */
-    border-left: 2px solid var(--seperator-lines);
-    /* Left border as visual accent */
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
-    /* Slight shadow to separate sidebar from content */
-    transition: right 0.3s ease;
-    /* Smooth slide-in/out animation */
-    z-index: 1000;
-    /* Ensure the sidebar is on top of other elements */
+    background: var(--background-color2); /* Dark secondary background for sidebar for contrast with main content */
+    padding: var(--space-md); /* Inner spacing to keep content from touching edges */
+    position: fixed; /* Fixed positioning to remain visible while scrolling */
+    top: 0; /* Stick to the top of the viewport */
+    right: -12rem; /* Start hidden off-screen to the right, slide-in animation handles visibility */
+    width: 10rem; /* Sidebar width, can be adapted for responsive layouts */
+    height: 100dvh; /* Full dynamic viewport height to match screen size */
+    overflow-y: auto; /* Enable vertical scroll if content exceeds height */
+    border-left: 2px solid var(--seperator-lines); /* Accent border for separation from main content */
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth effect */
+    transition: right 0.3s ease; /* Smooth slide-in/out when hovering or toggling */
+    z-index: 1000; /* Ensure sidebar stays above other page elements */
 }
 
-/* Invisible hover zone at the right edge of the screen */
+/* Invisible hover zone at the right edge to trigger sidebar */
 .hover-zone {
-    content: '';
-    /* Empty content */
-    position: fixed;
-    /* Fixed to stay in place when scrolling */
-    top: 0;
-    /* Start at top of viewport */
-    right: 0;
-    /* Stick to the right edge */
-    width: 50px;
-    /* Width of hover-sensitive area */
-    height: 100vh;
-    /* Full viewport height */
-    z-index: 999;
-    /* Slightly lower than sidebar so hover works */
+    content: ''; /* Empty element to act as hover target */
+    position: fixed; /* Remains fixed while scrolling */
+    top: 0; /* Align with top of viewport */
+    right: 0; /* Stick to right edge */
+    width: 50px; /* Narrow trigger area for hover */
+    height: 100vh; /* Full viewport height */
+    z-index: 999; /* Slightly below sidebar so hover works consistently */
 }
 
-/* When user hovers over the right edge, show the sidebar */
-.hover-zone:hover+.sidebar,
+/* Show sidebar when hover-zone or sidebar itself is hovered */
+.hover-zone:hover + .sidebar,
 .sidebar:hover {
-    right: 0;
-    /* Slide the sidebar fully into view */
+    right: 0; /* Slide sidebar fully into view */
 }
 
-
-/* Container for various fields (e.g., board, dice, messages) */
+/* Container for multiple fields (board, dice, messages) */
 .fields-container {
-    display: grid;
-    /* Use CSS Grid for layout */
-    grid-template-columns: 2fr 1fr;
-    /* Two columns: first takes 2 parts, second 1 part */
-    grid-template-rows: 1fr;
-    /* One Row */
-    height: 70vh;
-    /* Fallback for old Browsers in case dvh is not known */
-    height: 70dvh;
-    /* Container height: 70% of dynamic viewport(screen) height */
-    gap: 1.2rem;
-    /* Gap between rows and columns */
-    margin-top: 1.2rem;
-    /* Space above the container */
+    display: grid; /* Grid layout for easy two-column arrangement */
+    grid-template-columns: 2fr 1fr; /* Left column twice the width of right column */
+    grid-template-rows: 1fr; /* Single row, fills available vertical space */
+    height: 70dvh; /* 70% of dynamic viewport height */
+    gap: var(--space-md); /* Gap between grid cells */
+    margin-top: var(--space-md); /* Space above container for separation from top bar */
 }
 
-/* Individual field styling */
+/* Individual field for messages */
 .field.message {
-    background: var(--background-color2);
-    /* Dark gray background for each field */
-    border: 2px solid var(--border-color);
-    /* Cyan border around each field */
-    padding: 1.2rem;
-    /* Space inside the field */
-    border-radius: 0.5rem;
-    /* Rounded corners for modern look */
-    text-align: center;
-    /* Center content horizontally */
+    background: var(--background-color2); /* Dark background for message box */
+    border: 2px solid var(--border-color); /* Accent border around field */
+    padding: var(--space-md); /* Inner padding for content */
+    border-radius: var(--radius-md); /* Rounded corners for modern look */
+    text-align: center; /* Center content horizontally */
+    height: 3rem; /* Fixed height for consistency */
 }
 
-/* Specific styling for the board Field to be able to also contain the messages field and the Setting */
+/* Board container for game pieces */
 .field.board {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    gap: 0 rem;
+    display: grid; /* Enable grid layout for board cells */
+    grid-template-columns: 1fr; /* Single column (can be modified for multi-row boards) */
+    grid-template-rows: 1fr; /* Single row */
+    gap: 0; /* No spacing between cells */
 }
 
-/* Horizontal divider line */
+/* Horizontal divider line styling */
 .divider {
-    border: none;
-    /* Remove all default borders */
-    border-top: 2px solid var(--seperator-lines);
-    /* Top border only, 2px cyan line */
-    margin: 1.2rem 0;
-    /* Space above and below the line */
+    border: none; /* Remove default border */
+    border-top: 2px solid var(--seperator-lines); /* Top border only as visual divider */
+    margin: var(--space-md) 0; /* Vertical spacing around divider */
 }
 
 /* Login container: form layout */
 .login-container form {
-    display: flex;
-    /* Use flexbox for form layout */
-    flex-direction: column;
-    /* Stack inputs and button vertically */
-    gap: 0.5rem;
-    /* Space between each input/button */
+    display: flex; /* Flex layout for vertical stacking */
+    flex-direction: column; /* Stack inputs and buttons vertically */
+    gap: var(--space-sm); /* Small gap between form elements */
 }
 
-/* Styling for input fields inside the login form */
+/* Input fields inside login form */
 .login-container input {
-    font-size: 0.7rem;
-    /* Smaller text inside inputs */
-    padding: 0.3rem 0.5rem;
-    /* Inner spacing: top/bottom 6px, left/right 9px */
-    border-radius: 0.3rem;
-    /* Rounded corners */
-    border: 1px solid var(--border-color);
-    /* Cyan border */
-    background: var(--background-color2);
-    /* Dark background */
-    color: var(--text-color);
-    /* White text */
+    font-size: 0.7rem; /* Smaller font for compact inputs */
+    padding: 0.3rem 0.5rem; /* Internal padding for readability */
+    border-radius: var(--radius-sm); /* Slight rounding for inputs */
+    border: 1px solid var(--border-color); /* Accent border for clarity */
+    background: var(--background-color2); /* Match sidebar/field backgrounds */
+    color: var(--text-color); /* High-contrast text */
 }
 
-/* Styling for login button */
+/* Login button styling */
 .login-container button {
-    font-size: 0.9rem;
-    /* Smaller text for compact button */
-    padding: 0.2rem;
-    /* Inner spacing for button */
-    border-radius: 0.3rem;
-    /* Rounded corners */
-    border: none;
-    /* Remove default border */
-    background: var(--button-color);
-    /* Cyan button background */
-    color: var(--text-color2);
-    /* Black text */
-    font-weight: bold;
-    /* Bold text for emphasis */
-    cursor: pointer;
-    /* Pointer cursor on hover */
+    font-size: 0.9rem; /* Slightly larger text for button */
+    padding: 0.2rem; /* Compact padding */
+    border-radius: var(--radius-sm); /* Rounded corners to match inputs */
+    border: none; /* Remove default browser border */
+    background: var(--button-color); /* Button background color from variables */
+    color: var(--text-color2); /* Text color for contrast */
+    font-weight: bold; /* Emphasis on clickable button */
+    cursor: pointer; /* Pointer cursor on hover for feedback */
 }
 
 /* Hover effect for login button */
 .login-container button:hover {
-    background: var(--hover-color);
-    /* Change button background to lighter cyan on hover */
-    box-shadow: 0 0 0.8rem var(--shadow);
-    /* Add glowing shadow effect */
+    background: var(--hover-color); /* Lighter background on hover */
+    box-shadow: 0 0 0.8rem var(--shadow); /* Glow effect to indicate interactivity */
 }
 
+/* =========================
+   RULES SECTION STYLING
+   ========================= */
 
-/*RULES*/
-
+/* Section headings for rules */
 .rules-section h2 {
-    font-family: 'Edo Sz', sans-serif;
-    /*??*/
-    font-size: 200%;
-    text-align: left;
-    margin-left: 10%;
-    color: rgb(255, 255, 255);
+    font-family: 'Edo Sz', sans-serif; /* Decorative font for rules heading */
+    font-size: 2rem; /* Large font size for section emphasis */
+    text-align: left; /* Align heading to left */
+    margin-left: 10%; /* Offset heading from container edge */
+    color: var(--text-color); /* White/primary text color */
 }
 
+/* Expand/collapse symbols for main rules heading */
 .rules-section summary h2::before {
-    content: "+ ";
+    content: "+ "; /* Show plus symbol when collapsed */
 }
 
 .rules-section details[open] summary h2::before {
-    content: "- ";
+    content: "- "; /* Show minus symbol when expanded */
 }
 
+/* Expand/collapse symbols for subheadings */
 .rules-section details summary h3::before {
-    content: "+ ";
-    margin-right: 6px;
+    content: "+ "; /* Collapsed symbol for sub-items */
+    margin-right: var(--space-sm); /* Small space before text */
 }
 
-.rules-section details[open]>summary h3::before {
-    content: "- ";
+.rules-section details[open] > summary h3::before {
+    content: "- "; /* Expanded symbol for sub-items */
 }
 
+/* Nested list spacing */
 .rules-section ul {
-    margin-left: 12%;
+    margin-left: 12%; /* Indent for nested lists */
 }
 
+/* Subheading for rule points */
 .rules-points h3 {
-    font-family: 'Edo Sz', sans-serif;
-    /*??*/
-    text-align: left;
-    color: #F0F0F0;
+    font-family: 'Edo Sz', sans-serif; /* Decorative font for subheadings */
+    text-align: left; /* Align text left */
+    color: var(--text-color); /* Consistent color */
 }
 
+/* Individual list items */
 .rules-points li {
-    margin-left: -10%;
-    font-family: 'Myriad Pro', sans-serif;
+    margin-left: -10%; /* Adjust for bullet alignment */
+    font-family: 'Myriad Pro', sans-serif; /* Standard readable font for list text */
 }
 
 .rules-points ul {
-    list-style-type: disc;
+    list-style-type: disc; /* Use disc bullets */
 }
 
 .rules-points ul li:nth-child(odd)::marker {
-    color: rgb(49, 83, 194);
+    color: var(--bullet-points); /* Cyan bullet for odd items */
 }
 
 .rules-points ul li:nth-child(even)::marker {
-    color: red;
+    color: var(--bullet-points); /* Cyan bullet for even items */
 }
 
-
+/* Details spacing */
 details {
-    margin-bottom: -16px;
+    margin-bottom: -1rem; /* Reduce spacing between collapsed sections */
 }
 
 details[open] {
-    padding-bottom: 12px;
+    padding-bottom: 0.75rem; /* Extra padding when expanded for readability */
 }
 
+/* Summary styling */
 summary {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
+    cursor: pointer; /* Pointer to indicate interactivity */
+    display: flex; /* Flex layout for symbol + text alignment */
+    align-items: center; /* Vertically center summary content */
 }
 
-
+/* Default symbols */
 summary::before {
-    color: #F0F0F0;
-    font-size: 16px;
-    margin-right: 6.4px;
+    color: #F0F0F0; /* Light color for expand/collapse symbol */
+    font-size: 1rem; /* Size of symbol */
+    margin-right: var(--space-sm); /* Space between symbol and text */
 }
 
-
-
+/* Subheading color and transition */
 summary h3 {
-    display: inline;
-    color: #F0F0F0;
-    transition: color 0.3s;
+    display: inline; /* Keep inline for proper flex alignment */
+    color: #F0F0F0; /* Default text color */
+    transition: color 0.3s; /* Smooth color transition on hover */
 }
 
-summary:hover h3 {
-    color: #67d2dc;
-}
-
+/* Hover effect for rules summary text */
+summary:hover h3,
 summary:hover h2 {
-    color: #67d2dc;
+    color: #67d2dc; /* Change color to cyan highlight when hovered */
 }
-
-
-
-/*ScoreBoard*/
-
+/* =========================
+   Scoreboard Section
+   ========================= */
 .scoreboard {
-    margin-top: 80px;
-    text-align: center;
+    margin-top: 5rem; /* Space above scoreboard to separate from previous content */
+    text-align: center; /* Center the entire scoreboard content horizontally */
 }
 
 .scoreboard h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 2px;
-    color: rgb(255, 255, 255);
-    margin-bottom: 20px;
+    font-family: 'Bebas Neue', sans-serif; /* Decorative, bold font for headings */
+    letter-spacing: 2px; /* Add spacing between letters for visual emphasis */
+    color: var(--text-color); /* White/primary text color for contrast */
+    margin-bottom: 1.25rem; /* Space below heading for separation from table */
 }
 
-
 .scoreboard table {
-    margin: 0 auto;
-    border-collapse: collapse;
-    width: 60%;
-    font-family: 'Myriad Pro', sans-serif;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    margin: 0 auto; /* Center table horizontally */
+    border-collapse: collapse; /* Merge table borders for clean look */
+    width: 60%; /* Table occupies 60% of parent width */
+    font-family: 'Myriad Pro', sans-serif; /* Standard readable font for table content */
+    background-color: rgba(255, 255, 255, 0.05); /* Slightly translucent background for depth */
+    border-radius: var(--radius-lg); /* Rounded corners for modern styling */
+    overflow: hidden; /* Ensure border radius is respected */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); /* Soft outer glow for subtle visual pop */
 }
 
 .scoreboard th,
 .scoreboard td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 12px 20px;
-    color: #F0F0F0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Subtle separation between rows */
+    padding: 0.75rem 1.25rem; /* Comfortable padding for readability */
+    color: #F0F0F0; /* Light text color for contrast */
 }
 
 .scoreboard th {
-    background-color: rgb(59, 58, 58);
-    font-weight: bold;
-    letter-spacing: 1px;
+    background-color: rgb(59, 58, 58); /* Dark header background for distinction */
+    font-weight: bold; /* Bold text for emphasis */
+    letter-spacing: 1px; /* Slight letter spacing for clarity */
 }
 
 .scoreboard tr:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transition: background-color 0.3s;
+    background-color: rgba(255, 255, 255, 0.1); /* Highlight row on hover for interaction feedback */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
-
-/* Board*/
-
+/* =========================
+   Board Controls Section
+   ========================= */
 .controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
+    display: flex; /* Flexbox to align inputs and buttons horizontally */
+    justify-content: center; /* Center controls horizontally */
+    align-items: center; /* Align controls vertically */
+    gap: var(--space-sm); /* Small spacing between controls */
+    margin-bottom: var(--space-md); /* Space below controls for separation from board */
 }
 
 .controls label {
-    font-weight: bold;
-    font-size: 0.9rem;
+    font-weight: bold; /* Emphasize label text */
+    font-size: 0.9rem; /* Slightly smaller text for compactness */
 }
 
 .controls input {
-    width: 60px;
-    text-align: center;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    background: var(--background-color2);
-    color: var(--text-color);
+    width: 60px; /* Fixed input width for uniformity */
+    text-align: center; /* Center number or text inside input */
+    border-radius: var(--radius-sm); /* Slight rounding to match buttons */
+    border: 1px solid var(--border-color); /* Input border accent */
+    background: var(--background-color2); /* Match secondary background */
+    color: var(--text-color); /* White text for readability */
 }
 
 .controls button {
-    background: var(--button-color);
-    border: none;
-    border-radius: 6px;
-    padding: 4px 8px;
-    color: var(--text-color2);
-    font-weight: bold;
-    cursor: pointer;
+    background: var(--button-color); /* Button primary color */
+    border: none; /* Remove default browser border */
+    border-radius: var(--radius-sm); /* Rounded corners for buttons */
+    padding: 0.25rem 0.5rem; /* Compact padding */
+    color: var(--text-color2); /* High contrast text color */
+    font-weight: bold; /* Emphasize button text */
+    cursor: pointer; /* Pointer cursor for interactivity */
 }
 
 .controls button:hover {
-    background: var(--hover-color);
-    box-shadow: 0 0 8px var(--shadow);
+    background: var(--hover-color); /* Change color on hover to indicate interaction */
+    box-shadow: 0 0 0.5rem var(--shadow); /* Soft glow on hover for feedback */
 }
 
-/* Board grid styling */
+/* =========================
+   Board Grid Styling
+   ========================= */
 .board-container {
-    display: flex;              /* Flexbox für Zentrierung */
-    justify-content: center;    /* horizontal zentrieren */
-    align-items: center;        /* vertikal zentrieren */
-    height: 100%;               /* optional, Höhe des Containers */
+    display: flex; /* Flex container for board centering */
+    justify-content: center; /* Center board horizontally */
+    align-items: center; /* Center board vertically */
+    height: 100%; /* Take full height of container */
 }
 
 .board {
-    display: grid;
-    gap: 6px;
-    justify-content: center;
-    background-color: #000000;
-    padding: 0px;
-    border-radius: 12px;
-    border: 8px solid #000000;
+    display: grid; /* Grid layout for board cells */
+    gap: 0.375rem; /* Space between cells */
+    justify-content: center; /* Center grid horizontally */
+    background-color: var(--background-color); /* Match main background for seamless look */
+    padding: 0; /* Remove internal padding */
+    border-radius: var(--radius-lg); /* Rounded corners for board container */
+    border: 0.5rem solid var(--background-color); /* Solid border matching background for subtle effect */
 }
 
 .board.flipped {
-  transform: rotate(180deg);
-  transform-origin: center;
+    transform: rotate(180deg); /* Flip board for alternate perspective */
+    transform-origin: center; /* Rotate around center of board */
 }
 
 .cell {
-    background-color: #fffbe8;
-    border-radius: 4px;
-    display: flex;
+    background-color: #fffbe8; /* Light cell background for contrast with pieces */
+    border-radius: var(--radius-sm); /* Slight rounding for each cell */
+    display: flex; /* Flex layout to center pieces inside cells */
     justify-content: center;
     align-items: center;
-    width: 56px;
-    height: 56px;
-    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+    width: 3.5rem; /* Standardized cell width */
+    height: 3.5rem; /* Standardized cell height */
+    box-shadow: inset 0 0 0.25rem rgba(0, 0, 0, 0.1); /* Subtle inner shadow for depth */
+    position: relative; /* Required for positioning arrows inside cells */
 }
 
 .cell.highlight {
-    border: 3px solid yellow;
-    box-shadow: 0 0 10px yellow;
+    border: 0.1875rem solid yellow; /* Highlight active cell with yellow border */
+    box-shadow: 0 0 0.625rem yellow; /* Glow effect to emphasize cell */
+    z-index: 10; /* Bring highlighted cell above other elements */
+    cursor: pointer; /* Pointer cursor to indicate interactable cell */
 }
 
+/* Arrows inside board cells for guidance */
+.cell .arrow {
+    position: absolute; /* Position relative to cell */
+    top: 50%; /* Vertically center */
+    transform: translateY(-50%); /* Adjust for exact vertical center */
+    font-size: 1.5rem; /* Large enough to be visible but not overpowering */
+    color: rgba(0, 0, 0, 0.4); /* Semi-transparent to avoid distraction */
+    pointer-events: none; /* Prevent arrows from interfering with clicks */
+}
+
+.cell .arrow.right {
+    right: 0.375rem; /* Slight padding from right edge */
+}
+
+.cell .arrow.left {
+    left: 0.375rem; /* Slight padding from left edge */
+}
+
+/* =========================
+   Game Pieces
+   ========================= */
 .piece {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
+    width: 2.1875rem; /* Standardized piece size relative to cell */
+    height: 2.1875rem; /* Standardized piece size */
+    border-radius: 50%; /* Circular shape for game pieces */
+    opacity: 0.65; /* Slight transparency when inactive */
+    transition: opacity 0.3s ease; /* Smooth fade effect when moved */
+}
+
+.piece.moved {
+    opacity: 1; /* Full opacity for active/moved pieces */
+}
+
+.piece.blue.final {
+    background-color: #011c61; /* Deep blue to indicate final position */
+}
+
+.piece.red.final {
+    background-color: #6e0000; /* Deep red to indicate final position */
 }
 
 .blue {
-    background-color: #3a6ff7;
+    background-color: #003acd; /* Standard blue piece color */
 }
 
 .red {
-    background-color: #e14a4a;
+    background-color: #d30000; /* Standard red piece color */
 }
 
-
-/* Dice field */
+/* =========================
+   Dice Field Section
+   ========================= */
 #dice-field {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: flex; /* Flex container for vertical alignment */
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically */
 }
 
 .dice-container {
-    margin: 10px 0;
+    margin: 0.625rem 0; /* Vertical spacing between dice and buttons (10px -> rem) */
 }
 
 #dice-image {
-    width: 250px;
-    height: 250px;
-    border: 4px solid var(--border-color);
-    border-radius: 16px;
-    background-color: #111;
-    box-shadow: 0 0 20px rgba(0, 1, 1, 0.4);
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    width: 15.625rem; /* Dice image width (250px -> rem) */
+    height: 15.625rem; /* Dice image height */
+    border: 0.25rem solid var(--border-color); /* Border accent for dice */
+    border-radius: var(--radius-md); /* Rounded corners for aesthetic */
+    background-color: #111; /* Dark background to contrast dice graphics */
+    box-shadow: 0 0 1.25rem rgba(0, 1, 1, 0.4); /* Soft glow around dice */
+    transition: transform 0.2s ease, box-shadow 0.3s ease; /* Smooth animation on roll or hover */
 }
 
-/* Roll dice button */
-#rollDiceBtn {
-    background: var(--button-color);
-    border: none;
-    border-radius: 6px;
-    padding: 4px 8px;
-    color: var(--text-color2);
-    font-weight: bold;
-    cursor: pointer;
+/* Roll and Skip Turn Buttons */
+#rollDiceBtn,
+#skipTurnBtn {
+    background: var(--button-color); /* Primary button color */
+    border: none; /* Remove default border */
+    border-radius: var(--radius-sm); /* Rounded corners */
+    padding: 0.25rem 0.5rem; /* Compact button padding */
+    color: var(--text-color2); /* High contrast text color */
+    font-weight: bold; /* Bold button text */
+    cursor: pointer; /* Pointer cursor for interactivity */
 }
 
-#rollDiceBtn:hover {
-    background: var(--hover-color);
-    box-shadow: 0 0 8px var(--shadow);
+#rollDiceBtn:hover,
+#skipTurnBtn:hover {
+    background: var(--hover-color); /* Change background on hover */
+    box-shadow: 0 0 0.5rem var(--shadow); /* Subtle glowing effect */
 }
 
-/* Sidebar buttons */
-.sidebar-button {
-    width: 100%;
-    background: none;
-    border: none;
-    color: #ffff;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    text-align: left;
-    padding: 8px 0;
-    margin-bottom: 8px;
-    transition: color 0.2s ease;
-
+#skipTurnBtn {
+    margin-top: var(--space-md); /* Space above skip button to separate from roll button */
 }
 
-.sidebar-button:hover {
-    color: #00ffff;
-    text-shadow: 0 0 6px #00ffff;
+#skipTurnBtn:disabled {
+    background-color: #999; /* Gray out button when disabled */
+    cursor: not-allowed; /* Indicate non-interactive state */
 }
 
-.sidebar a.sidebar-button {
-    display: block;
-    text-decoration: none;
-    color: #ffff;
-    font-weight: bold;
-    font-size: 1rem;
-    padding: 8px 0;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: color 0.2s ease, text-shadow 0.2s ease;
+/* =========================
+   Sidebar Buttons
+   ========================= */
+.sidebar-button,
+.sidebar a,
+.sidebar button {
+    display: block; /* Fill horizontal space */
+    width: 100%; /* Full width */
+    background: none; /* Transparent background */
+    border: none; /* Remove default border */
+    color: var(--text-color); /* White text for visibility */
+    font-weight: bold; /* Bold for emphasis */
+    font-size: 1rem; /* Standard size */
+    cursor: pointer; /* Pointer cursor to indicate interactivity */
+    text-align: left; /* Align text to left for sidebar */
+    padding: 0.5rem 0; /* Vertical spacing for clickable area */
+    margin-bottom: 0.5rem; /* Space between buttons */
+    text-decoration: none; /* Remove underline from links */
+    transition: color 0.2s ease, text-shadow 0.2s ease; /* Smooth hover effect */
 }
 
-.sidebar a.sidebar-button:hover {
-    color: #00ffff;
-    text-shadow: 0 0 6px #00ffff;
+.sidebar-button:hover,
+.sidebar a:hover,
+.sidebar button:hover {
+    color: #00ffff; /* Cyan color on hover */
+    text-shadow: 0 0 0.375rem #00ffff; /* Glow effect on hover */
 }
 
-/* Hide default summary arrow */
+/* Hide default summary arrow for dropdowns */
 .new-game-dropdown summary {
     list-style: none;
 }
 
-/* New Game settings container */
+/* =========================
+   New Game Settings Container
+   ========================= */
 .new-game-settings {
-    display: flex;
-    flex-direction: column;
-    background-color: #181818;
-    border: 1px solid #00eaff;
-    border-radius: 8px;
-    padding: 10px;
-    margin-top: 8px;
+    display: flex; /* Flex container for stacking inputs and labels */
+    flex-direction: column; /* Vertical layout */
+    background-color: #181818; /* Dark background for contrast */
+    border: 0.0625rem solid #00eaff; /* Thin cyan border for accent */
+    border-radius: var(--radius-md); /* Rounded corners */
+    padding: 0.625rem; /* Internal padding for content */
+    margin-top: 0.5rem; /* Space above container */
 }
 
-/* Smooth slide-down animation */
+/* Smooth slide-down animation for dropdown open */
 .new-game-dropdown[open] .new-game-settings {
-    animation: slideDown 0.25s ease-out forwards;
+    animation: slideDown 0.25s ease-out forwards; /* Fade and translate from top */
 }
 
-.new-game-dropdown:focus-within>summary,
-.new-game-dropdown[open]>summary {
-    color: #00ffff;
-    text-shadow: 0 0 6px #00ffff;
+.new-game-dropdown:focus-within > summary,
+.new-game-dropdown[open] > summary {
+    color: #00ffff; /* Highlight summary heading on focus or open */
+    text-shadow: 0 0 0.375rem #00ffff; /* Glow effect */
 }
 
 @keyframes slideDown {
     from {
-        opacity: 0;
-        transform: translateY(-10px);
+        opacity: 0; /* Start fully transparent */
+        transform: translateY(-0.625rem); /* Start slightly above */
     }
-
     to {
-        opacity: 1;
-        transform: translateY(0);
+        opacity: 1; /* Fade in */
+        transform: translateY(0); /* Move to final position */
     }
 }
 
-/* Labels */
+/* Labels inside New Game Settings */
 .new-game-settings label {
-    margin-top: 6px;
-    font-size: 0.9rem;
-    color: #F0F0F0;
+    margin-top: 0.375rem; /* Space above label */
+    font-size: 0.9rem; /* Slightly smaller text */
+    color: #F0F0F0; /* Light text for readability */
 }
 
-/* Dropdown selects */
+/* Dropdown select styling */
 .new-game-settings select {
-    margin-top: 4px;
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #00eaff;
-    background-color: #111;
-    color: #fff;
-    font-size: 0.9rem;
+    margin-top: 0.25rem; /* Space above select box */
+    padding: 0.375rem; /* Internal padding for text */
+    border-radius: var(--radius-sm); /* Rounded corners */
+    border: 0.0625rem solid #00eaff; /* Cyan border accent */
+    background-color: #111; /* Dark background for contrast */
+    color: var(--text-color); /* Light text */
+    font-size: 0.9rem; /* Slightly smaller font size */
 }
 
-/* Disabled difficulty */
+/* Disabled state for difficulty select */
 #difficultySelect:disabled {
-    background-color: #333;
-    color: #888;
-    cursor: not-allowed;
-}
-
-/* Start Game button */
-.start-btn {
-    margin-top: 10px;
-    padding: 8px;
-    border-radius: 6px;
-    border: none;
-    font-weight: bold;
-    background-color: #00eaff;
-    color: black;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.start-btn:hover {
-    background-color: #00ffff;
-    box-shadow: 0 0 8px #00ffff;
+    background-color: #333; /* Dark gray background when disabled */
+    color: #888; /* Gray text for readability */
+    cursor: not-allowed; /* Show disabled cursor */
 }
