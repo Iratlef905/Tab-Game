@@ -614,3 +614,118 @@ summary:hover h2 {
     color: #888; /* Gray text for readability */
     cursor: not-allowed; /* Show disabled cursor */
 }
+
+/* Online Game Settings Styles */
+.online-game-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    background-color: #2c2c2c;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.online-game-settings label {
+    font-weight: bold;
+    color: #f0f0f0;
+    margin-bottom: 5px;
+}
+
+.online-game-settings input,
+.online-game-settings select {
+    padding: 8px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #3a3a3a;
+    color: #f0f0f0;
+    font-size: 14px;
+}
+
+.online-game-settings input:focus,
+.online-game-settings select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.join-btn {
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.join-btn:hover {
+    background-color: #218838;
+}
+
+.join-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.game-status {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #343a40;
+    border-radius: 4px;
+    border-left: 4px solid #007bff;
+}
+
+.game-status p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #f8f9fa;
+}
+
+#gameIdDisplay {
+    font-family: monospace;
+    background-color: #495057;
+    padding: 3px 6px;
+    border-radius: 3px;
+    word-break: break-all;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .online-game-settings {
+        padding: 10px;
+    }
+    
+    .online-game-settings input,
+    .online-game-settings select {
+        padding: 6px;
+        font-size: 13px;
+    }
+    
+    .join-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
+
+.leave-btn {
+    padding: 10px 15px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.leave-btn:hover {
+    background-color: #c82333;
+}
+
+.leave-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}

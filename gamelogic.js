@@ -811,7 +811,16 @@ class ServerRequests {
     }
 
     async join(group, nick, password, size) {
-        return this._post("join", { group, nick, password, size });
+        if (!size) {
+            return { error: "undefined size" };
+        }
+        
+        const sizeNum = parseInt(size);
+        if (isNaN(sizeNum) || sizeNum % 2 === 0) {
+            return { error: `invalid size '${size}'` };
+        }
+        
+        return this._post("join", { group, nick, password, size: sizeNum });
     }
 
     async leave(nick, password, game) {
@@ -837,17 +846,6 @@ class ServerRequests {
     async ranking(group, size) {
         return this._get(`ranking?group=${group}&size=${size}`);
     }
-
-/*
-    register(nick, password){}
-    join(group, nick, password, size){}
-    leave(nick, password, game){}
-    roll(nick, password, game){}
-    pass(nick, password, game){}
-    notify(nick, password, game, cell){}
-    update(nick, game){}
-    ranking(group, size){}
-*/
 }
 
 // === Initialize game and sidebar when DOM is ready ===
@@ -880,7 +878,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await server.register(nick, password);
 
             if (response.error) {
-                // === Table case 2: wrong password ===
+                // === Case 2: wrong password ===
                 if (response.error === "User registered with a different password") {
                     alert("Registration failed: password does not match.");
                 } else {
@@ -888,14 +886,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             } else {
                 // === Empty response {} → means success or confirmation ===
-                // But distinguish visually:
                 const existingUser = localStorage.getItem("lastUser_" + nick);
 
                 if (existingUser === password) {
-                    // === Table case 3: password confirmation ===
+                    // === Case 3: password confirmation ===
                     alert("Password confirmed. Login successful!");
                 } else if (existingUser === null) {
-                    // === Table case 1 or 4: registration succeeded ===
+                    // === Case 1 or 4: registration succeeded ===
                     alert("Registration completed successfully!");
                 }
 
@@ -903,6 +900,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("lastUser_" + nick, password);
 
                 window.currentUser = { nick, password };
+                
+                // Automatically fill online game fields
+                const nickInput = document.getElementById("nickInput");
+                const passwordInput = document.getElementById("passwordInput");
+                
+                if (nickInput) nickInput.value = nick;
+                if (passwordInput) passwordInput.value = password;
 
             }
 
@@ -911,5 +915,219 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error(err);
         }
     });
-});
 
+    // === ONLINE GAME JOIN handler ===
+    const joinGameBtn = document.getElementById("joinGameBtn");
+    const leaveGameBtn = document.getElementById("leaveGameBtn"); // New leave button
+    const gameStatus = document.getElementById("gameStatus");
+    const gameIdDisplay = document.getElementById("gameIdDisplay");
+    
+    // Variable to store polling interval
+    let pollInterval = null;
+    
+    // Function to start polling for game updates
+    async function startGamePolling(nick, gameId) {
+        const server = new ServerRequests();
+        
+        // Clear any existing interval
+        if (pollInterval) clearInterval(pollInterval);
+        
+        pollInterval = setInterval(async () => {
+            try {
+                const update = await server.update(nick, gameId);
+                
+                if (update.error) {
+                    console.error("Error in update:", update.error);
+                    gameStatus.innerHTML = `<p>Status: Error - ${update.error}</p>`;
+                    clearInterval(pollInterval);
+                    return;
+                }
+                
+                // Check if game has a winner (game ended)
+                if (update.winner !== undefined) {
+                    console.log("Game ended with winner:", update.winner);
+                    gameStatus.innerHTML = `<p>Status: Game ended. Winner: ${update.winner || "None"}</p>`;
+                    
+                    // Disable leave button since game is over
+                    if (leaveGameBtn) leaveGameBtn.disabled = true;
+                    
+                    // Stop polling
+                    clearInterval(pollInterval);
+                    
+                    // Show game result message
+                    const messageBox = document.getElementById("message-box");
+                    if (messageBox) {
+                        if (update.winner === null) {
+                            messageBox.textContent = "Game ended without a winner.";
+                        } else if (update.winner === nick) {
+                            messageBox.textContent = "Congratulations! You won!";
+                        } else {
+                            messageBox.textContent = `Game over. ${update.winner} wins!`;
+                        }
+                    }
+                    
+                    return;
+                }
+                
+                // If the game has started (has pieces, players, etc.)
+                if (update.pieces || update.players) {
+                    console.log("Game started!", update);
+                    gameStatus.innerHTML = '<p>Status: Game started!</p>';
+                    
+                    // Initialize local game with data from server
+                    initializeGameFromServer(update);
+                    
+                    // Enable leave button since game is active
+                    if (leaveGameBtn) leaveGameBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error("Error in polling:", error);
+                clearInterval(pollInterval);
+            }
+        }, 2000); // Poll every 2 seconds
+    }
+    
+    // Function to leave the current game
+    async function leaveCurrentGame() {
+        if (!window.currentGame) {
+            alert("You are not in a game.");
+            return;
+        }
+        
+        const { nick, password, id } = window.currentGame;
+        const server = new ServerRequests();
+        
+        try {
+            if (leaveGameBtn) leaveGameBtn.disabled = true;
+            leaveGameBtn.textContent = "Leaving...";
+            
+            const response = await server.leave(nick, password, id);
+            
+            if (response.error) {
+                alert(`Error: ${response.error}`);
+                if (leaveGameBtn) leaveGameBtn.disabled = false;
+                leaveGameBtn.textContent = "Leave Game";
+            } else {
+                // Successfully left the game
+                console.log("Left game successfully");
+                gameStatus.innerHTML = '<p>Status: Left the game.</p>';
+                
+                // Stop polling
+                if (pollInterval) {
+                    clearInterval(pollInterval);
+                    pollInterval = null;
+                }
+                
+                // Reset game state
+                window.currentGame = null;
+                
+                // Enable join button
+                if (joinGameBtn) joinGameBtn.disabled = false;
+                
+                // Update message
+                const messageBox = document.getElementById("message-box");
+                if (messageBox) {
+                    messageBox.textContent = "You left the game.";
+                }
+                
+                // Reset leave button
+                leaveGameBtn.textContent = "Leave Game";
+                leaveGameBtn.disabled = true;
+            }
+        } catch (error) {
+            console.error("Error leaving game:", error);
+            alert("Error communicating with the server");
+            if (leaveGameBtn) {
+                leaveGameBtn.disabled = false;
+                leaveGameBtn.textContent = "Leave Game";
+            }
+        }
+    }
+    
+    // Add leave button event listener
+    if (leaveGameBtn) {
+        leaveGameBtn.addEventListener("click", leaveCurrentGame);
+        leaveGameBtn.disabled = true; // Initially disabled
+    }
+    
+    if (joinGameBtn) {
+        joinGameBtn.addEventListener("click", async () => {
+            const group = document.getElementById("groupInput").value;
+            const nick = document.getElementById("nickInput").value;
+            const password = document.getElementById("passwordInput").value;
+            const size = document.getElementById("sizeSelect").value;
+            
+            if (!group || !nick || !password || !size) {
+                alert("Please fill all fields!");
+                return;
+            }
+            
+            const server = new ServerRequests();
+            
+            try {
+                joinGameBtn.disabled = true;
+                joinGameBtn.textContent = "Joining...";
+                gameStatus.innerHTML = '<p>Status: Joining game...</p>';
+                
+                const response = await server.join(group, nick, password, size);
+                
+                if (response.error) {
+                    gameStatus.innerHTML = `<p>Status: Error - ${response.error}</p>`;
+                    alert(`Error: ${response.error}`);
+                } else if (response.game) {
+                    gameStatus.innerHTML = '<p>Status: Joined! Waiting for opponent...</p>';
+                    gameIdDisplay.textContent = `Game ID: ${response.game}`;
+                    
+                    // Save game information
+                    window.currentGame = {
+                        id: response.game,
+                        group: group,
+                        nick: nick,
+                        password: password,
+                        size: parseInt(size)
+                    };
+                    
+                    // Enable leave button
+                    if (leaveGameBtn) {
+                        leaveGameBtn.disabled = false;
+                        leaveGameBtn.textContent = "Leave Game";
+                    }
+                    
+                    // Start polling for updates
+                    startGamePolling(nick, response.game);
+                }
+            } catch (error) {
+                console.error("Error in join:", error);
+                gameStatus.innerHTML = '<p>Status: Connection error</p>';
+                alert("Error communicating with the server");
+            } finally {
+                joinGameBtn.disabled = false;
+                joinGameBtn.textContent = "Join Online Game";
+            }
+        });
+    }
+    
+    // Function to initialize game from server data
+    function initializeGameFromServer(gameData) {
+        // Implement logic to initialize the game
+        // with data received from the server
+        console.log("Initializing game with data:", gameData);
+        
+        // Example: Create board with correct size
+        if (gameData.pieces && window.currentGame) {
+            // Update board size
+            game.board.newBoard(window.currentGame.size, "blue"); // Adjust as needed
+            
+            // Determine player color based on nick
+            const myNick = window.currentGame.nick;
+            const myColor = gameData.players && gameData.players[myNick] ? 
+                gameData.players[myNick] : "blue";
+            
+            // Update message
+            const messageBox = document.getElementById("message-box");
+            if (messageBox) {
+                messageBox.textContent = `Online game started! You are playing as ${myColor}.`;
+            }
+        }
+    }
+});

@@ -207,6 +207,47 @@
 
             <hr class="divider"> <!-- Divider line between sections -->
             
+            <!-- Online Game Dropdown Section -->
+            <details class="online-game-dropdown">
+                <summary class="sidebar-button">Online Game</summary>
+                <div class="online-game-settings">
+                    <!-- Group ID Input -->
+                    <label>Group ID:</label>
+                    <input type="number" id="groupInput" min="1" max="99" value="99">
+                    
+                    <!-- Nickname Input (pre-filled if logged in) -->
+                    <label>Nickname:</label>
+                    <input type="text" id="nickInput" placeholder="Your nickname">
+                    
+                    <!-- Password Input -->
+                    <label>Password:</label>
+                    <input type="password" id="passwordInput" placeholder="Your password">
+                    
+                    <!-- Board Size Selection -->
+                    <label>Board Size:</label>
+                    <select id="sizeSelect">
+                        <option value="7">7</option>
+                        <option value="9" selected>9</option>
+                        <option value="11">11</option>
+                        <option value="13">13</option>
+                        <option value="15">15</option>
+                    </select>
+                    
+                    <!-- Join Game Button -->
+                    <button id="joinGameBtn" class="join-btn" type="button">Join Online Game</button>
+                    
+                    <button id="leaveGameBtn" class="leave-btn" type="button" disabled>Leave Game</button>
+
+                    <!-- Game Status Display -->
+                    <div id="gameStatus" class="game-status">
+                        <p>Status: Not connected</p>
+                        <p id="gameIdDisplay">Game ID: None</p>
+                    </div>
+                </div>
+            </details>
+
+            <hr class="divider"> <!-- Divider line between sections -->
+            
             <button id="giveUpBtn" class="give-up-btn">Give up</button>
 
             <!-- Sidebar navigation links -->
