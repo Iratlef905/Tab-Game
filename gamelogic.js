@@ -1062,12 +1062,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             
+            const sizeNum = parseInt(size);
+            if (sizeNum % 2 === 0 || sizeNum < 7 || sizeNum > 15) {
+                alert("Board size must be an odd number between 7 and 15!");
+                return;
+            }
+            
             const server = new ServerRequests();
             
             try {
                 joinGameBtn.disabled = true;
                 joinGameBtn.textContent = "Joining...";
-                gameStatus.innerHTML = '<p>Status: Joining game...</p>';
+                gameStatus.innerHTML = '<p>Status: Joining game with size ' + size + '...</p>';
                 
                 const response = await server.join(group, nick, password, size);
                 
@@ -1075,16 +1081,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     gameStatus.innerHTML = `<p>Status: Error - ${response.error}</p>`;
                     alert(`Error: ${response.error}`);
                 } else if (response.game) {
-                    gameStatus.innerHTML = '<p>Status: Joined! Waiting for opponent...</p>';
+                    gameStatus.innerHTML = `<p>Status: Joined! Waiting for opponent with same board size (${size})...</p>`;
                     gameIdDisplay.textContent = `Game ID: ${response.game}`;
                     
-                    // Save game information
+                    // Save game information with the REQUESTED size
                     window.currentGame = {
                         id: response.game,
                         group: group,
                         nick: nick,
                         password: password,
-                        size: parseInt(size)
+                        requestedSize: sizeNum,  // Store what we requested
+                        size: sizeNum  // Initially same, will be validated later
                     };
                     
                     // Enable leave button
@@ -1109,25 +1116,89 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Function to initialize game from server data
     function initializeGameFromServer(gameData) {
-        // Implement logic to initialize the game
-        // with data received from the server
         console.log("Initializing game with data:", gameData);
         
-        // Example: Create board with correct size
-        if (gameData.pieces && window.currentGame) {
-            // Update board size
-            game.board.newBoard(window.currentGame.size, "blue"); // Adjust as needed
+        // Check if we have valid game data
+        if (!gameData.pieces || !Array.isArray(gameData.pieces)) {
+            console.error("Invalid game data from server");
+            gameStatus.innerHTML = '<p>Status: Error - Invalid game data</p>';
+            return;
+        }
+        
+        // Calculate board size from pieces array
+        const totalCells = gameData.pieces.length;
+        const calculatedSize = totalCells / 4; // 4 rows
+        
+        // actual verification
+        if (window.currentGame && window.currentGame.size !== calculatedSize) {
+            console.error(`Error: Requested size ${window.currentGame.size} but server paired with size ${calculatedSize}.`);
             
-            // Determine player color based on nick
-            const myNick = window.currentGame.nick;
-            const myColor = gameData.players && gameData.players[myNick] ? 
-                gameData.players[myNick] : "blue";
+            // Update status
+            gameStatus.innerHTML = `<p>Status: Error - Wrong board size (you: ${window.currentGame.size}, server: ${calculatedSize})</p>`;
             
-            // Update message
+            // Show error message
             const messageBox = document.getElementById("message-box");
             if (messageBox) {
-                messageBox.textContent = `Online game started! You are playing as ${myColor}.`;
+                messageBox.textContent = `Error: You requested ${window.currentGame.size} columns but were paired with ${calculatedSize} columns. Leaving game.`;
             }
+            
+            // Automatically leave the game because it's not what the player wanted
+            setTimeout(() => {
+                leaveCurrentGame();
+            }, 2000);
+            
+            return; 
         }
+        
+        
+        // Update board with the calculated size 
+        game.board.newBoard(calculatedSize, "blue");
+        
+        // Determine player color
+        const myNick = window.currentGame ? window.currentGame.nick : null;
+        let myColor = "blue";
+        
+        if (myNick && gameData.players && gameData.players[myNick]) {
+            myColor = gameData.players[myNick];
+        }
+        
+        // Clear and reposition pieces
+        game.board.pieces.fill(null);
+        
+        // Place pieces from server data
+        gameData.pieces.forEach((pieceInfo, index) => {
+            if (pieceInfo && pieceInfo.color) {
+                const piece = new Piece(pieceInfo.color);
+                
+                if (pieceInfo.moved) piece.firstmove();
+                if (pieceInfo.final) piece.reachedLastRow();
+                
+                game.board.pieces[index] = piece;
+            }
+        });
+        
+        game.board.showPieces();
+        
+        // Set current player
+        if (gameData.turn) {
+            game.board.currentPlayer = gameData.turn;
+        }
+        
+        // Update UI orientation
+        if (myColor === "red") {
+            game.board.boardElement.classList.add("flipped");
+        } else {
+            game.board.boardElement.classList.remove("flipped");
+        }
+        
+        // Update message
+        const messageBox = document.getElementById("message-box");
+        if (messageBox) {
+            const opponentNick = Object.keys(gameData.players || {}).find(nick => nick !== myNick);
+            messageBox.textContent = `Online game started! Board: ${calculatedSize} columns. You are ${myColor}.`;
+        }
+        
+        // Update status
+        gameStatus.innerHTML = '<p>Status: Game started!</p>';
     }
 });
