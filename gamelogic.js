@@ -124,9 +124,27 @@ class Dice {
         this.result = null;                                      // Stores last rolled value
         this.onRoll = onRoll;                                    // Callback function triggered after dice roll
 
+        this.isOnline = false;
+        this.serverRequests = null;
+
         if (this.rollButton) {
             this.rollButton.addEventListener("click", () => this.rollDice()); // Attach click listener to roll dice
         }
+    }
+
+    enableOnlineMode(serverRequests) {
+        this.isOnline = true;
+        this.serverRequests = serverRequests;
+    }
+
+    updateFromServer(value) {
+        this.result = value;
+
+        this.updateDiceImage(); 
+        this.rollButton.disabled = false;
+
+        let steps = value === 0 ? 6 : value;
+        if (this.onRoll) this.onRoll(steps); 
     }
 
     // === Rolls the dice using a weighted probability distribution ===
@@ -143,14 +161,27 @@ class Dice {
     }
 
     // === Rolls dice, updates image, message, and calls callback ===
-    rollDice() {
+    async rollDice() {
         this.rollButton.disabled = true;                        // Prevent multiple clicks while rolling
-        this.result = this.rollWeightedDice();                 // Generate weighted dice result
-        this.updateDiceImage();                                 // Update dice image to match result
+        if(!this.isOnline){
+            this.result = this.rollWeightedDice();                 // Generate weighted dice result
+            this.updateDiceImage();                                 // Update dice image to match result
 
-        let steps = this.result === 0 ? 6 : this.result;       // Treat 0 as 6 for movement logic
+            let steps = this.result === 0 ? 6 : this.result;       // Treat 0 as 6 for movement logic
 
-        if (this.onRoll) this.onRoll(steps);                   // Call provided callback with steps
+            if (this.onRoll) this.onRoll(steps);                   // Call provided callback with steps
+        }else{
+            console.log("Rolling via server…");
+
+            this.rollButton.disabled = true;
+
+            await this.serverRequests.roll(
+                this.serverRequests.nick,
+                this.serverRequests.password,
+                this.serverRequests.gameID
+            );
+            return;
+        }
     }
 
     // === Updates the dice image according to last rolled value ===
