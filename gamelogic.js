@@ -229,6 +229,7 @@ class Game {
     enableOnlineMode(){
         this.isServerGame = true;
         this.serverRequests = new ServerRequests();
+        this.dice.enableOnlineMode(this.serverRequests);
     }
 
     // === Handles dice result and determines extra move or turn end ===
