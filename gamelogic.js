@@ -206,6 +206,8 @@ class Game {
         this.board = new Board(rows, playerColor);                     // Create Board instance
         this.dice = new Dice((result) => this.onDiceRolled(result));   // Create Dice instance with callback
         this.diceResult = null;                                        // Store last dice result
+        this.isServerGame = false;
+        this.serverRequests = null;
         this.extraMove = false;                                        // Tracks if player gets an extra move
         this.dice.rollButton.disabled = false;                         // Enable dice roll button initially
         this.board.showMessage(`Player ${this.board.currentPlayer} starts! Roll the dice.`); // Initial message
@@ -213,9 +215,20 @@ class Game {
         // === Skip Turn button setup ===
         this.skipTurnButton = document.getElementById("skipTurnBtn");  // Reference to skip button
         if (this.skipTurnButton) {
-            this.skipTurnButton.addEventListener("click", () => this.skipTurn()); // Attach click listener
-            this.skipTurnButton.disabled = true;                        // Initially disabled until needed
+            this.skipTurnButton.addEventListener("click", () => {
+                if (this.isServerGame) {
+                    this.skipTurnOnline();
+                } else {
+                    this.skipTurn();
+                    this.skipTurnButton.disabled = true;                        // Initially disabled until needed
+                }
+            });
         }
+    }
+
+    enableOnlineMode(){
+        this.isServerGame = true;
+        this.serverRequests = new ServerRequests();
     }
 
     // === Handles dice result and determines extra move or turn end ===
@@ -284,6 +297,14 @@ class Game {
         this.dice.resetDiceImage();           // Reset dice image to initial state
     }
 
+    async skipTurnOnline() {
+        await this.serverRequests.pass(
+                        this.serverRequests.nick,
+                        this.serverRequests.password,
+                        this.serverRequests.gameID);
+        return;
+    }
+
     // === Enables clicks on all pieces for current player ===
     enablePieceClicks() {
         this.board.pieces.forEach(piece => {
@@ -302,6 +323,14 @@ class Game {
 
     // === Handles piece click: movement, capturing, and turn logic ===
     async onPieceClicked(piece) {
+        if(this.isServerGame){
+            await this.serverRequests.notify(
+                this.serverRequests.nick,
+                this.serverRequests.password,
+                this.serverRequests.gameID,
+                this.board.pieces.indexOf(piece));
+        }
+
         if (piece.color !== this.board.currentPlayer) {              // Ensure player can only move own pieces
             this.board.showMessage("You can't move pieces of the opponent!");
             return;
@@ -821,6 +850,11 @@ class ServerRequests {
     //constuctor
     constructor() {
         this.url = "http://twserver.alunos.dcc.fc.up.pt:8008/";
+        this.group;
+        this.nick;
+        this.password;
+        this.gameID;
+        this.size;
     }
 
     // helpers
