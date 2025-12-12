@@ -147,6 +147,16 @@ h1 {
     height: 3rem; /* Fixed height for consistency */
 }
 
+.message.neon-blue {
+    color: #00e7ff;
+    text-shadow: 0 0 6px rgba(0, 231, 255, 0.8);
+}
+
+.message.neon-red {
+    color: #ff3b6a;
+    text-shadow: 0 0 6px rgba(255, 59, 106, 0.8);
+}
+
 /* Board container for game pieces */
 .field.board {
     display: grid; /* Enable grid layout for board cells */
@@ -426,18 +436,19 @@ summary:hover h2 {
 .cell .arrow {
     position: absolute; /* Position relative to cell */
     top: 50%; /* Vertically center */
-    transform: translateY(-50%); /* Adjust for exact vertical center */
+    left: 50%; /* Horizontally center */
+    transform: translate(-50%, -50%); /* Perfect center alignment */
     font-size: 1.5rem; /* Large enough to be visible but not overpowering */
     color: rgba(0, 0, 0, 0.4); /* Semi-transparent to avoid distraction */
     pointer-events: none; /* Prevent arrows from interfering with clicks */
 }
 
 .cell .arrow.right {
-    right: 0.375rem; /* Slight padding from right edge */
+    left: 50%; /* Keep centered even for directional class */
 }
 
 .cell .arrow.left {
-    left: 0.375rem; /* Slight padding from left edge */
+    left: 50%; /* Keep centered even for directional class */
 }
 
 /* =========================
@@ -650,7 +661,7 @@ summary:hover h2 {
 
 .join-btn {
     padding: 10px 15px;
-    background-color: #28a745;
+    background-color: #00a2a2;
     color: white;
     border: none;
     border-radius: 4px;
@@ -661,7 +672,7 @@ summary:hover h2 {
 }
 
 .join-btn:hover {
-    background-color: #218838;
+    background-color: #018787;
 }
 
 .join-btn:disabled {

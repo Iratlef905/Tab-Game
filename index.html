@@ -27,8 +27,8 @@
             <!-- Login form container (left side of top bar) -->
             <div class="login-container">
                 <form>
-                    <input type="text" placeholder="Username"> <!-- Input for username -->
-                    <input type="password" placeholder="Password"> <!-- Input for password -->
+                    <input type="text" placeholder="Username" autocomplete="username"> <!-- Input for username -->
+                    <input type="password" placeholder="Password" autocomplete="current-password"> <!-- Input for password -->
                     <button>Login</button> <!-- Login button -->
                 </form>
             </div>
@@ -50,14 +50,15 @@
             </div>
 
 
-            <!-- ================== DICE FIELD ================== -->
-            <div class="field" id="dice-field">
-                <div class="dice-container">
-                    <img id="dice-image" src="images/initial_dice.png" alt="Dice result"> <!-- Shows current dice face -->
-                </div>
-                <button id="rollDiceBtn">Roll Dice</button> <!-- Button to roll the dice -->
-                <button id="skipTurnBtn" disabled>Skip Turn</button>
+        <!-- ================== DICE FIELD ================== -->
+        <div class="field" id="dice-field">
+            <div class="dice-container">
+                <img id="dice-image" src="images/initial_dice.png" alt="Dice result"> <!-- Shows current dice face -->
+                <div id="diceValueText">-</div>
             </div>
+            <button id="rollDiceBtn">Roll Dice</button> <!-- Button to roll the dice -->
+            <button id="skipTurnBtn" disabled>Skip Turn</button>
+        </div>
         </div>
 
         <hr class="divider"> <!-- Divider below board and dice section -->
@@ -142,19 +143,13 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Player</th>       <!-- Column for player names -->
-                        <th>Score</th>  <!-- Column for storing best score -->
+                        <th>#</th>           <!-- Rank -->
+                        <th>Player</th>      <!-- Player nickname -->
+                        <th>Wins</th>        <!-- Number of victories -->
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Blue</td>     <!-- Player 1 entry -->
-                        <td>0</td>           <!-- Placeholder for best result -->
-                    </tr>
-                    <tr>
-                        <td>Red</td>     <!-- Player 2 entry -->
-                        <td>0</td>           <!-- Placeholder for best result -->
-                    </tr>
+                <tbody id="scoreboard-body">
+                    <tr><td colspan="3">Loading ranking...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -210,18 +205,18 @@
             <!-- Online Game Dropdown Section -->
             <details class="online-game-dropdown">
                 <summary class="sidebar-button">Online Game</summary>
-                <div class="online-game-settings">
+                <form class="online-game-settings" id="onlineGameForm">
                     <!-- Group ID Input -->
                     <label>Group ID:</label>
                     <input type="number" id="groupInput" min="1" max="99" value="99">
                     
                     <!-- Nickname Input (pre-filled if logged in) -->
                     <label>Nickname:</label>
-                    <input type="text" id="nickInput" placeholder="Your nickname">
+                    <input type="text" id="nickInput" placeholder="Your nickname" autocomplete="username">
                     
                     <!-- Password Input -->
                     <label>Password:</label>
-                    <input type="password" id="passwordInput" placeholder="Your password">
+                    <input type="password" id="passwordInput" placeholder="Your password" autocomplete="current-password">
                     
                     <!-- Board Size Selection -->
                     <label>Board Size:</label>
@@ -243,7 +238,7 @@
                         <p>Status: Not connected</p>
                         <p id="gameIdDisplay">Game ID: None</p>
                     </div>
-                </div>
+                </form>
             </details>
 
             <hr class="divider"> <!-- Divider line between sections -->
