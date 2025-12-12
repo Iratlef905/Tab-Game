@@ -487,6 +487,10 @@ class Game {
 
     // === Determines if the current player has any valid moves ===
     hasAvailableMoves() {
+        // If server already highlighted selectable cells, we have moves
+        if (this.isServerGame && Array.isArray(this.serverSelected) && this.serverSelected.length > 0) {
+            return true;
+        }
         const playerColor = this.board.currentPlayer;
         return this.board.pieces.some(piece => {                        // Check each piece
             if (!piece || piece.color !== playerColor) return false;   // Skip if piece is missing or wrong color
@@ -518,6 +522,22 @@ class Game {
     }
 
     async skipTurnOnline() {
+        // Extra-move and no local options: allow reroll instead of calling pass
+        const noServerOptions = !Array.isArray(this.serverSelected) || this.serverSelected.length === 0;
+        if (this.extraMove && this.diceResult !== null && noServerOptions && !this.hasAvailableMoves()) {
+            this.diceResult = null;
+            if (this.dice) {
+                this.dice.result = null;
+                this.dice.resetDiceImage();
+                this.dice.updateDiceLabel();
+            }
+            this.disablePieceClicks();
+            if (this.skipTurnButton) this.skipTurnButton.disabled = true;
+            enableRollButton(this.dice?.rollButton);
+            this.board.showMessage("No valid moves. Roll again.", this.playerColor || "blue");
+            return;
+        }
+
         if (this.extraMove && this.diceResult === null) {
             this.board.showMessage("You must roll again before passing.");
             if (this.skipTurnButton) this.skipTurnButton.disabled = true;
@@ -644,9 +664,10 @@ class Game {
                     bindServerSelection(this.serverSelected); // restore cell handlers if we have them
                 }
                 this.dice.rollButton.disabled = true;  // keep roll blocked until move resolves
-                // If no server options are present, allow skip to let the player pass
+                // If no server options are present and no moves exist, keep Skip available (lets reroll or pass)
                 const hasOptions = Array.isArray(this.serverSelected) && this.serverSelected.length > 0;
-                this.skipTurnButton.disabled = hasOptions;
+                const noMoves = !this.hasAvailableMoves();
+                this.skipTurnButton.disabled = hasOptions || !noMoves;
                 return;
             }
             } catch (err) {
@@ -1361,6 +1382,15 @@ document.addEventListener("DOMContentLoaded", () => {
             || (window.currentUser && window.currentUser.nick)
             || nick;
         const myNickLower = myNickResolved ? myNickResolved.toLowerCase() : null;
+
+        // Drop updates that belong to a different game
+        const currentGameId = (window.currentGame && window.currentGame.id) || game.serverRequests?.gameID;
+        const updateGameId = update.game;
+        if (currentGameId && updateGameId && updateGameId !== currentGameId) {
+            console.warn("Ignoring update for different game", { updateGameId, currentGameId });
+            return;
+        }
+
         // Ensure we keep the server-declared initial color across updates
         const initColorUpdate = deriveInitialColor(update);
         if (initColorUpdate) game.serverInitialColor = game.serverInitialColor || initColorUpdate;
@@ -1586,8 +1616,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (turnSwitchedPlayer || !isMyTurn) {
                 game.stopRollEnforcer();
                 game.diceResult = null;
-                // DO NOT clear extraMove here; server may still owe us an extra roll
-                game.dice.resetDiceImage();
+                // DO NOT clear extraMove here; server may still owe us an extra roll.
+                // Keep the last dice image so both players can see what was rolled.
                 game.disablePieceClicks(); // clicks enabled after dice arrives
                 game.skipTurnButton.disabled = true;
             }
@@ -1682,7 +1712,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Allow Skip if there are no server options or the server says mustPass;
                 // otherwise block Skip only when extra rolls apply AND there is at least one option
                 const allowSkip = (!game.extraMove || !hasServerOptions);
-                game.skipTurnButton.disabled = !allowSkip;
+                // If we have an extra roll but no moves and no server options, auto-clear dice to allow reroll
+                const noLocalMoves = !hasServerOptions && !game.hasAvailableMoves();
+                if (game.extraMove && noLocalMoves && game.diceResult !== 1) {
+                    const lastRoll = game.diceResult;
+                    game.diceResult = null;
+                    if (game.dice) {
+                        // Keep showing the last roll value so the player knows what they rolled
+                        game.dice.result = lastRoll;
+                        game.dice.updateDiceLabel();
+                        game.dice._rolling = false;
+                    }
+                    game.disablePieceClicks();
+                    game.skipTurnButton.disabled = true;
+                    enableRollButton(game.dice.rollButton);
+                    game.board.showMessage(`No valid moves with roll ${lastRoll}. Roll again.`, game.playerColor || "blue");
+                } else {
+                    game.skipTurnButton.disabled = !allowSkip;
+                }
                 // Server may keep selected highlight options; avoid stale highlights on choice completion
                 if (!game.extraMove) game.disableHighlights();
             } else {
