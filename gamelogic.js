@@ -1324,15 +1324,47 @@ class AIPlayer {
 
 class ServerRequests {
 
-    //constuctor
     constructor() {
-        //this.url = "http://localhost:8131/"; // third delivery
-        this.url = "http://twserver.alunos.dcc.fc.up.pt:8008/"; // second delivery
+        // Valores iniciais
+        const savedServer = localStorage.getItem('tabGameServer') || 'remote';
+        this.useLocalServer = (savedServer === 'local');
+        
+        // Definir URL
+        this.url = this.useLocalServer ? 
+            "http://localhost:8131/" : 
+            "http://twserver.alunos.dcc.fc.up.pt:8008/";
+        
         this.group;
         this.nick;
         this.password;
         this.gameID;
         this.size;
+        
+        // Inicializar selector
+        this.initDropdown();
+    }
+
+    initDropdown() {
+        const dropdown = document.getElementById('serverSelect');
+        const status = document.getElementById('serverStatus');
+        
+        if (!dropdown) return;
+        
+        
+        // Event listener
+        dropdown.addEventListener('change', (e) => {
+            if (e.target.value === 'local') {
+                this.url = "http://localhost:8131/";
+                this.useLocalServer = true;
+                localStorage.setItem('tabGameServer', 'local');
+            } else {
+                this.url = "http://twserver.alunos.dcc.fc.up.pt:8008/";
+                this.useLocalServer = false;
+                localStorage.setItem('tabGameServer', 'remote');
+            }
+            
+            console.log(`Switched to ${this.url}`);
+        });
     }
 
     // helpers

@@ -817,3 +817,46 @@ summary:hover h2 {
         justify-content: center;
     }
 }
+
+/* ================== SERVER SELECTOR ================== */
+.server-selector {
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.server-label {
+    color: #5acfd7;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.server-dropdown {
+    width: 100%;
+    padding: 8px;
+    background: #111;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.server-dropdown:hover {
+    background: #1a1a1a;
+}
+
+.server-dropdown:focus {
+    outline: none;
+}
+
+.server-dropdown option {
+    background: #222;
+    color: white;
+    padding: 8px;
+}
+
+.server-dropdown::-ms-expand {
+    display: none; 
+}
