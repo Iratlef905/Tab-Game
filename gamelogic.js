@@ -308,17 +308,17 @@ async function fetchAndRenderRanking() {
     const groupNum = parseInt(group, 10);
     const sizeNum = parseInt(size, 10);
     if (isNaN(groupNum) || isNaN(sizeNum)) {
-        tbody.innerHTML = `<tr><td colspan="3">Set group and size to load ranking.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4">Set group and size to load ranking.</td></tr>`;
         return;
     }
 
     const server = new ServerRequests();
 
-    tbody.innerHTML = `<tr><td colspan="3">Loading ranking...</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4">Loading ranking...</td></tr>`;
     try {
         const res = await server.ranking(groupNum, sizeNum);
         if (res?.error) {
-            tbody.innerHTML = `<tr><td colspan="3">Ranking error: ${res.error}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4">Ranking error: ${res.error}</td></tr>`;
             return;
         }
 
@@ -326,30 +326,35 @@ async function fetchAndRenderRanking() {
         const sorted = listRaw
             .map((entry, idx) => {
                 const nick = entry.nick || entry.player || entry.name || `Player ${idx + 1}`;
-                // Use victories as specified; wins as a light fallback
-                const wins = entry.victories ?? entry.wins ?? 0;
-                return { nick, wins };
+                // Usa victories (conforme especificação) com fallback para wins
+                const victories = entry.victories ?? entry.wins ?? 0;
+                const games = entry.games ?? 0;
+                return { nick, victories, games };
             })
             .sort((a, b) => {
-                if (b.wins !== a.wins) return b.wins - a.wins;
+                // Ordena por vitórias decrescentes
+                if (b.victories !== a.victories) return b.victories - a.victories;
+                // Em caso de empate, ordena por menor número de jogos (maior eficiência)
+                if (a.games !== b.games) return a.games - b.games;
+                // Se ainda empatar, ordena alfabeticamente
                 return a.nick.localeCompare(b.nick);
             })
             .slice(0, 10);
 
         if (!sorted.length) {
-            tbody.innerHTML = `<tr><td colspan="3">No ranking data.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4">No ranking data.</td></tr>`;
             return;
         }
 
         tbody.innerHTML = "";
         sorted.forEach((entry, idx) => {
             const row = document.createElement("tr");
-            row.innerHTML = `<td>${idx + 1}</td><td>${entry.nick}</td><td>${entry.wins}</td>`;
+            row.innerHTML = `<td>${idx + 1}</td><td>${entry.nick}</td><td>${entry.victories}</td><td>${entry.games}</td>`;
             tbody.appendChild(row);
         });
     } catch (err) {
         console.error("Failed to load ranking", err);
-        tbody.innerHTML = `<tr><td colspan="3">Ranking unavailable</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4">Ranking unavailable</td></tr>`;
     }
 }
 
@@ -1402,16 +1407,40 @@ class ServerRequests {
     }
 
     async ranking(group, size) {
-        // Try POST first (some servers reject GET), then fallback to GET
-        const gNum = parseInt(group, 10);
-        const sNum = parseInt(size, 10);
-        const body = { group: isNaN(gNum) ? group : gNum, size: isNaN(sNum) ? size : sNum };
-        console.log("Requesting ranking with", body);
-        const res = await this._post("ranking", body);
-        if (res && res.error) {
-            return this._get(`ranking?group=${encodeURIComponent(group)}&size=${encodeURIComponent(size)}`);
+        // Converte group e size para números
+        const groupNum = parseInt(group, 10);
+        const sizeNum = parseInt(size, 10);
+        
+        // Validação básica antes de enviar
+        if (isNaN(groupNum) || isNaN(sizeNum)) {
+            return { error: "Group and size must be valid numbers" };
         }
-        return res;
+        
+        // Cria o objeto no formato que o servidor espera
+        const body = { group: groupNum, size: sizeNum };
+        
+        // Usa apenas POST (conforme especificação)
+        const result = await this._post("ranking", body);
+        
+        // Verifica se a resposta contém 'ranking' ou 'error'
+        if (result && result.error) {
+            console.error("Ranking error:", result.error);
+            // Mapeia erros específicos para mensagens amigáveis
+            const errorMessages = {
+                "Undefined group": "Group number is required",
+                "Invalid size": "Invalid board size",
+                "Invalid group": "Invalid group number"
+            };
+            result.error = errorMessages[result.error] || result.error;
+            return result;
+        }
+        
+        // Garante que ranking seja um array
+        if (!result.ranking) {
+            result.ranking = [];
+        }
+        
+        return result;
     }
 }
 
