@@ -326,17 +326,13 @@ async function fetchAndRenderRanking() {
         const sorted = listRaw
             .map((entry, idx) => {
                 const nick = entry.nick || entry.player || entry.name || `Player ${idx + 1}`;
-                // Usa victories (conforme especificação) com fallback para wins
                 const victories = entry.victories ?? entry.wins ?? 0;
                 const games = entry.games ?? 0;
                 return { nick, victories, games };
             })
             .sort((a, b) => {
-                // Ordena por vitórias decrescentes
                 if (b.victories !== a.victories) return b.victories - a.victories;
-                // Em caso de empate, ordena por menor número de jogos (maior eficiência)
                 if (a.games !== b.games) return a.games - b.games;
-                // Se ainda empatar, ordena alfabeticamente
                 return a.nick.localeCompare(b.nick);
             })
             .slice(0, 10);
@@ -1407,25 +1403,19 @@ class ServerRequests {
     }
 
     async ranking(group, size) {
-        // Converte group e size para números
         const groupNum = parseInt(group, 10);
         const sizeNum = parseInt(size, 10);
         
-        // Validação básica antes de enviar
         if (isNaN(groupNum) || isNaN(sizeNum)) {
             return { error: "Group and size must be valid numbers" };
         }
         
-        // Cria o objeto no formato que o servidor espera
         const body = { group: groupNum, size: sizeNum };
         
-        // Usa apenas POST (conforme especificação)
         const result = await this._post("ranking", body);
         
-        // Verifica se a resposta contém 'ranking' ou 'error'
         if (result && result.error) {
             console.error("Ranking error:", result.error);
-            // Mapeia erros específicos para mensagens amigáveis
             const errorMessages = {
                 "Undefined group": "Group number is required",
                 "Invalid size": "Invalid board size",
@@ -1435,7 +1425,6 @@ class ServerRequests {
             return result;
         }
         
-        // Garante que ranking seja um array
         if (!result.ranking) {
             result.ranking = [];
         }
