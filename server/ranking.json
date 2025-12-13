@@ -1,0 +1,53 @@
+{
+  "31-9": [
+    {
+      "nick": "up1",
+      "victories": 5,
+      "games": 10
+    },
+    {
+      "nick": "josua",
+      "victories": 3,
+      "games": 8
+    },
+    {
+      "nick": "up2",
+      "victories": 2,
+      "games": 3
+    }
+  ],
+  "99-9": [
+    {
+      "nick": "up1",
+      "victories": 4,
+      "games": 10
+    },
+    {
+      "nick": "josua",
+      "victories": 7,
+      "games": 7
+    },
+    {
+      "nick": "up2",
+      "victories": 10,
+      "games": 99
+    }
+  ],
+  "31-7": [
+    {
+      "nick": "up1",
+      "victories": 9,
+      "games": 10
+    },
+    {
+      "nick": "josua",
+      "victories": 8,
+      "games": 8
+    },
+    {
+      "nick": "up2",
+      "victories": 5,
+      "games": 9
+    }
+  ]
+}

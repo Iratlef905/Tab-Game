@@ -1309,7 +1309,7 @@ class ServerRequests {
 
     //constuctor
     constructor() {
-        this.url = "http://twserver.alunos.dcc.fc.up.pt:8008/";
+        this.url = "http://localhost:8131/";
         this.group;
         this.nick;
         this.password;
