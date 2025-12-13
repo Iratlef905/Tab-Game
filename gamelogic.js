@@ -280,18 +280,24 @@ function mapServerIndexToLocal(idx, rows, cols, initialColor, respectInitialColo
     return row * cols + col;
 }
 
+// Track the last known group/size (for ranking), even after leaving a game
+let lastGroup = "99";
+let lastSize = 9;
+
 // === Ranking helpers ===
 function getRankingParams() {
     const groupInput = document.getElementById("groupInput");
     const sizeSelect = document.getElementById("sizeSelect") || document.getElementById("columnsSelect");
-    const groupRaw = (window.currentGame?.group) || (groupInput?.value) || "99";
-    const sizeRaw = (window.currentGame?.size) || (sizeSelect?.value);
-    let sizeNum = parseInt(sizeRaw, 10);
-    // Enforce odd size within typical bounds (7–15); default to 9 if invalid
-    if (isNaN(sizeNum)) sizeNum = 9;
-    if (sizeNum % 2 === 0) sizeNum = Math.max(7, Math.min(15, sizeNum - 1));
+    const current = window.currentGame;
+    const groupRaw = (current?.group) || (groupInput?.value) || lastGroup || "99";
+    const sizeRaw = (current?.size) || (current?.requestedSize) || (sizeSelect?.value) || lastSize || 9;
+    const sizeNum = parseInt(sizeRaw, 10);
     const group = `${groupRaw}` || "99";
-    return { group, size: sizeNum };
+    const size = isNaN(sizeNum) ? (lastSize || 9) : sizeNum;
+    // Persist last seen values for future ranking fetches
+    lastGroup = group;
+    lastSize = size;
+    return { group, size };
 }
 
 async function fetchAndRenderRanking() {
@@ -320,7 +326,8 @@ async function fetchAndRenderRanking() {
         const sorted = listRaw
             .map((entry, idx) => {
                 const nick = entry.nick || entry.player || entry.name || `Player ${idx + 1}`;
-                const wins = entry.victories ?? entry.wins ?? entry.score ?? entry.games ?? 0;
+                // Use victories as specified; wins as a light fallback
+                const wins = entry.victories ?? entry.wins ?? 0;
                 return { nick, wins };
             })
             .sort((a, b) => {
@@ -1270,8 +1277,16 @@ class ServerRequests {
     }
 
     async ranking(group, size) {
-        // Use POST for ranking to avoid servers that reject GET
-        return this._post("ranking", { group, size });
+        // Try POST first (some servers reject GET), then fallback to GET
+        const gNum = parseInt(group, 10);
+        const sNum = parseInt(size, 10);
+        const body = { group: isNaN(gNum) ? group : gNum, size: isNaN(sNum) ? size : sNum };
+        console.log("Requesting ranking with", body);
+        const res = await this._post("ranking", body);
+        if (res && res.error) {
+            return this._get(`ranking?group=${encodeURIComponent(group)}&size=${encodeURIComponent(size)}`);
+        }
+        return res;
     }
 }
 
@@ -1914,6 +1929,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 game.board.showMessage(`Game ended. Winner: ${update.winner || "None"}`, "neutral");
 
+                // Persist the group/size used in this finished game for ranking refresh
+                if (window.currentGame) {
+                    lastGroup = window.currentGame.group || lastGroup;
+                    lastSize = window.currentGame.size || lastSize;
+                }
+
                 // Refresh ranking now that the server declared a winner
                 fetchAndRenderRanking();
             }
@@ -2038,18 +2059,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     gameStatus.innerHTML = `<p>Status: Error - ${response.error}</p>`;
                     alert(`Error: ${response.error}`);
                 } else if (response.game) {
-                    gameStatus.innerHTML = `<p>Status: Joined! Waiting for opponent with same board size (${size})...</p>`;
-                    gameIdDisplay.textContent = `Game ID: ${response.game}`;
-                    
-                    // Save game information with the REQUESTED size
-                    window.currentGame = {
-                        id: response.game,
-                        group: group,
-                        nick: nick,
-                        password: password,
-                        requestedSize: sizeNum,  // Store what we requested
-                        size: sizeNum  // Initially same, will be validated later
-                    };
+                gameStatus.innerHTML = `<p>Status: Joined! Waiting for opponent with same board size (${size})...</p>`;
+                gameIdDisplay.textContent = `Game ID: ${response.game}`;
+                
+                // Save game information with the REQUESTED size
+                window.currentGame = {
+                    id: response.game,
+                    group: group,
+                    nick: nick,
+                    password: password,
+                    requestedSize: sizeNum,  // Store what we requested
+                    size: sizeNum  // Initially same, will be validated later
+                };
+                lastGroup = group;
+                lastSize = sizeNum;
 
                     // Switch game into online mode so rolls/moves go through the server
                     game.enableOnlineMode();
@@ -2162,6 +2185,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const totalCells = gameData.pieces.length;
         const calculatedSize = totalCells / 4; // 4 rows
         const requestedSize = window.currentGame ? window.currentGame.requestedSize : null;
+
+        // If we didn't have a currentGame context (e.g., page refresh mid-game), populate it now
+        if (!window.currentGame) {
+            window.currentGame = {
+                id: gameData.game || game.serverRequests?.gameID || null,
+                group: game.serverRequests?.group || "99",
+                nick: game.serverRequests?.nick || null,
+                password: game.serverRequests?.password || null,
+                size: calculatedSize,
+                requestedSize: calculatedSize
+            };
+            lastGroup = window.currentGame.group;
+            lastSize = calculatedSize;
+        }
         
         // actual verification
         if (requestedSize && requestedSize !== calculatedSize) {
