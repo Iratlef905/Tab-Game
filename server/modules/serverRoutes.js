@@ -61,7 +61,7 @@ function ranking(req, res) {
             const data = JSON.parse(body);
             const { group, size } = data;
 
-            console.log('📊 Requisição de ranking recebida:', { group, size });
+            console.log('ranking received', { group, size });
 
             // checking
             if (group === undefined || size === undefined) {
@@ -88,7 +88,7 @@ function ranking(req, res) {
             // gets rankig
             const rankingData = getRanking(groupNum, sizeNum);
             
-            console.log(`✅ Ranking retornado para grupo ${groupNum}, tamanho ${sizeNum}: ${rankingData.length} registros`);
+            console.log(`ranking returned for group ${groupNum}, size ${sizeNum}: ${rankingData.length} entries`);
             
             // returns ranking
             res.writeHead(200, { 'Content-Type': 'application/json' });

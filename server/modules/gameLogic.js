@@ -11,7 +11,7 @@ function initRankingFile() {
 }
 
 function readRanking() {
-    initRankingFile(); // Garante que o arquivo existe
+    initRankingFile();
     const data = fs.readFileSync(rankingFile, 'utf8');
     return JSON.parse(data);
 }
@@ -28,7 +28,6 @@ function getRanking(group, size) {
         return [];
     }
     
-    // Ordena por vitórias decrescentes, depois por menor número de jogos
     return ranking[key].sort((a, b) => {
         if (b.victories !== a.victories) {
             return b.victories - a.victories;
@@ -37,7 +36,6 @@ function getRanking(group, size) {
     });
 }
 
-// Função para adicionar resultado (para testes manuais)
 function addResult(group, size, nick, isVictory) {
     const ranking = readRanking();
     const key = `${group}-${size}`;
@@ -61,7 +59,7 @@ function addResult(group, size, nick, isVictory) {
         });
     }
     
-    // Reordenar
+    // reorder
     ranking[key].sort((a, b) => {
         if (b.victories !== a.victories) {
             return b.victories - a.victories;
@@ -70,7 +68,7 @@ function addResult(group, size, nick, isVictory) {
     });
     
     writeRanking(ranking);
-    console.log(`✅ Resultado adicionado: ${nick} - ${isVictory ? 'Vitória' : 'Derrota'} no grupo ${group}, tamanho ${size}`);
+    console.log(`result added: ${nick} - ${isVictory ? 'victory' : 'defeat'} in group ${group}, size ${size}`);
 }
 
 module.exports = {

@@ -742,3 +742,78 @@ summary:hover h2 {
 }
 
 
+/* ================== RANKING CONTROLS ================== */
+.ranking-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 162, 162, 0.1);
+    border-radius: 10px;
+    align-items: center;
+    border: 1px solid rgba(0, 162, 162, 0.3);
+}
+
+.ranking-controls .control-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ranking-controls label {
+    color: #5acfd7;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.ranking-controls input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #00a2a2;
+    background: #222;
+    color: white;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.ranking-controls select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #00a2a2;
+    background: #222;
+    color: white;
+    font-size: 1rem;
+    min-width: 70px;
+}
+
+.ranking-controls button.refresh-btn {
+    padding: 6px 12px;
+    background: linear-gradient(45deg, #00a2a2, #5acfd7);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.ranking-controls button.refresh-btn:hover {
+    background: linear-gradient(45deg, #5acfd7, #00ffff);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* Responsive design for ranking controls */
+@media (max-width: 768px) {
+    .ranking-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .ranking-controls .control-group {
+        width: 100%;
+        justify-content: center;
+    }
+}

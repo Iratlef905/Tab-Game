@@ -136,17 +136,39 @@
 
         <hr class="divider"> <!-- Divider below rules section -->
 
-
         <!-- ================== SCOREBOARD ================== -->
-        <div class="scoreboard" id = "score">
+        <div class="scoreboard" id="score">
             <h2>Scoreboard</h2>
+            
+            <!-- Ranking Controls -->
+            <div class="ranking-controls">
+                <div class="control-group">
+                    <label for="rankingGroup">Group:</label>
+                    <input type="number" id="rankingGroup" min="1" max="99" value="31">
+                </div>
+                
+                <div class="control-group">
+                    <label for="rankingSize">Size:</label>
+                    <select id="rankingSize">
+                        <option value="7">7</option>
+                        <option value="9" selected>9</option>
+                        <option value="11">11</option>
+                        <option value="13">13</option>
+                        <option value="15">15</option>
+                    </select>
+                </div>
+                
+                <button id="refreshRanking" class="refresh-btn">Refresh Ranking</button>
+            </div>
+            <!-- End of Ranking Controls -->
+            
             <table>
                 <thead>
                     <tr>
-                        <th>#</th>           <!-- Rank -->
-                        <th>Player</th>      <!-- Player nickname -->
-                        <th>Wins</th>        <!-- Number of victories -->
-                        <th>Games</th>       <!-- Number of games played -->
+                        <th>#</th>
+                        <th>Player</th>
+                        <th>Wins</th>
+                        <th>Games</th>
                     </tr>
                 </thead>
                 <tbody id="scoreboard-body">
@@ -154,6 +176,7 @@
                 </tbody>
             </table>
         </div>
+        
 
         <!-- ================== HOVER ZONE FOR SIDEBAR ================== -->
         <div class="hover-zone"></div> <!-- Invisible area at right edge to trigger sidebar on hover -->

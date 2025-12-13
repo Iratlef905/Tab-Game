@@ -286,17 +286,34 @@ let lastSize = 9;
 
 // === Ranking helpers ===
 function getRankingParams() {
-    const groupInput = document.getElementById("groupInput");
-    const sizeSelect = document.getElementById("sizeSelect") || document.getElementById("columnsSelect");
+    const rankingGroupInput = document.getElementById("rankingGroup");
+    const rankingSizeSelect = document.getElementById("rankingSize");
+    
+    const onlineGroupInput = document.getElementById("groupInput");
+    const onlineSizeSelect = document.getElementById("sizeSelect") || document.getElementById("columnsSelect");
+    
     const current = window.currentGame;
-    const groupRaw = (current?.group) || (groupInput?.value) || lastGroup || "99";
-    const sizeRaw = (current?.size) || (current?.requestedSize) || (sizeSelect?.value) || lastSize || 9;
+    
+    const groupRaw = (rankingGroupInput?.value) || 
+                     (onlineGroupInput?.value) || 
+                     (current?.group) || 
+                     lastGroup || 
+                     "31";  // Default for 31
+    
+    const sizeRaw = (rankingSizeSelect?.value) || 
+                    (onlineSizeSelect?.value) || 
+                    (current?.size) || 
+                    (current?.requestedSize) || 
+                    lastSize || 
+                    9;
+    
     const sizeNum = parseInt(sizeRaw, 10);
-    const group = `${groupRaw}` || "99";
-    const size = isNaN(sizeNum) ? (lastSize || 9) : sizeNum;
-    // Persist last seen values for future ranking fetches
+    const group = `${groupRaw}`;
+    const size = isNaN(sizeNum) ? 9 : sizeNum;
+    
     lastGroup = group;
     lastSize = size;
+    
     return { group, size };
 }
 
@@ -1309,7 +1326,8 @@ class ServerRequests {
 
     //constuctor
     constructor() {
-        this.url = "http://localhost:8131/";
+        //this.url = "http://localhost:8131/"; // third delivery
+        this.url = "http://twserver.alunos.dcc.fc.up.pt:8008/"; // second delivery
         this.group;
         this.nick;
         this.password;
@@ -2479,4 +2497,58 @@ function syncBoardFromServerPieces(pieces, initialColor, forceHomeRows = false) 
             bindServerSelection(game.serverSelected);
         }
     }
+
+    
+    // ====== table controls ======
+    const rankingGroupInput = document.getElementById("rankingGroup");
+    const rankingSizeSelect = document.getElementById("rankingSize");
+    const refreshRankingBtn = document.getElementById("refreshRanking");
+    
+    if (rankingGroupInput) {
+        rankingGroupInput.addEventListener("change", () => {
+            fetchAndRenderRanking();
+        });
+    }
+    
+    if (rankingSizeSelect) {
+        rankingSizeSelect.addEventListener("change", () => {
+            fetchAndRenderRanking();
+        });
+    }
+    
+    if (refreshRankingBtn) {
+        refreshRankingBtn.addEventListener("click", () => {
+            fetchAndRenderRanking();
+        });
+    }
+    
+    if (rankingGroupInput) {
+        rankingGroupInput.addEventListener("keypress", (e) => {
+            if (e.key === 'Enter') {
+                fetchAndRenderRanking();
+            }
+        });
+    }
+    
+    const onlineGroupInput = document.getElementById("groupInput");
+    const onlineSizeSelect = document.getElementById("sizeSelect");
+    
+    if (onlineGroupInput && rankingGroupInput) {
+        onlineGroupInput.addEventListener("change", () => {
+            rankingGroupInput.value = onlineGroupInput.value;
+            fetchAndRenderRanking();
+        });
+    }
+    
+    if (onlineSizeSelect && rankingSizeSelect) {
+        onlineSizeSelect.addEventListener("change", () => {
+            rankingSizeSelect.value = onlineSizeSelect.value;
+            fetchAndRenderRanking();
+        });
+    }
+    
+    setTimeout(() => {
+        if (rankingGroupInput) rankingGroupInput.value = lastGroup;
+        if (rankingSizeSelect) rankingSizeSelect.value = lastSize;
+    }, 100);
 });
