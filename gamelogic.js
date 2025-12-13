@@ -381,6 +381,8 @@ class Game {
         this.hasServerSync = false;                                    // Tracks if board was synced from server
         this.serverStep = null;                                        // Latest server-declared step ("from","to",...)
         this.serverSelected = null;                                    // Latest server-selected indices
+        this.homeRows = { red: 0, blue: this.board.rows - 1 };         // Track which side each color starts on
+        this.updateHomeRows(true);                                     // Derive orientation from current piece layout
         enableRollButton(this.dice.rollButton);                        // Enable dice roll button initially
         this.board.showMessage(`Player ${this.board.currentPlayer} starts! Roll the dice.`); // Initial message
         this.applyPerspective();                                       // Orient board based on local perspective
@@ -437,6 +439,79 @@ class Game {
         // Flip so the local player's pieces are at the bottom; server colors are Red/Blue
         this.playerColor = color;
         this.applyPerspective(color);
+    }
+
+    // Detect the predominant starting row for each color so we know which side counts as "home"
+    updateHomeRows(force = false) {
+        if (!this.board || !this.board.columns) return;
+
+        const cols = this.board.columns;
+        const rows = this.board.rows || 4;
+        if (!this.homeRows || force) {
+            this.homeRows = { red: 0, blue: rows - 1 };
+        } else {
+            this.homeRows.red = this.homeRows.red ?? 0;
+            this.homeRows.blue = this.homeRows.blue ?? (rows - 1);
+        }
+
+        const counts = { red: new Map(), blue: new Map() };
+        this.board.pieces.forEach((piece, idx) => {
+            if (!piece || !counts[piece.color]) return;
+            const row = Math.floor(idx / cols);
+            const map = counts[piece.color];
+            map.set(row, (map.get(row) || 0) + 1);
+        });
+
+        ["red", "blue"].forEach(color => {
+            const map = counts[color];
+            if (!map || map.size === 0) return;
+            if (!force && this.homeRows[color] !== undefined) return;
+            const [row] = [...map.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0];
+            this.homeRows[color] = parseInt(row, 10);
+        });
+    }
+
+    // Returns the opposite edge row for a given color based on detected home rows
+    getFinalRowFor(color) {
+        const rows = this.board?.rows || 4;
+        const homeRow = (this.homeRows && this.homeRows[color] !== undefined)
+            ? this.homeRows[color]
+            : (color === "blue" ? rows - 1 : 0);
+        return homeRow === 0 ? rows - 1 : 0;
+    }
+
+    getHomeRowFor(color) {
+        const rows = this.board?.rows || 4;
+        return (this.homeRows && this.homeRows[color] !== undefined)
+            ? this.homeRows[color]
+            : (color === "blue" ? rows - 1 : 0);
+    }
+
+    hasPiecesInHomeRow(color) {
+        const startRow = this.getHomeRowFor(color);
+        return this.board.pieces.some((p, idx) => {
+            if (!p || p.color !== color) return false;
+            const r = Math.floor(idx / this.board.columns);
+            return r === startRow;
+        });
+    }
+
+    canEnterFinalRow(piece, destinationRow) {
+        const finalRow = this.getFinalRowFor(piece.color);
+        if (destinationRow !== finalRow) return true;               // Not targeting the final row
+
+        // If the piece is already sitting on the final row, let it move along that row.
+        const idx = this.board.pieces.indexOf(piece);
+        const currentRow = idx >= 0 ? Math.floor(idx / this.board.columns) : null;
+        if (currentRow === finalRow) return true;
+
+        // Otherwise, block re-entering the final row after it has already been reached once.
+        return !piece.wasAlreadyInLastRow;
+    }
+
+    isPieceOnFinalRow(piece, row) {
+        if (!piece) return false;
+        return row === this.getFinalRowFor(piece.color);
     }
 
     // === Helper to show no-move messaging and enable appropriate action ===
@@ -508,11 +583,16 @@ class Game {
             if (choices && Array.isArray(choices)) {
                 return choices.some(idx => {                            // Check if any choice is available
                     if (idx == null) return false;
+                    const targetRow = Math.floor(idx / this.board.columns);
+                    if (!this.canEnterFinalRow(piece, targetRow)) return false;
                     const targetPiece = this.board.pieces[idx];
                     return !targetPiece || targetPiece.color !== playerColor; // Valid if target empty or enemy
                 });
             }
             const destination = this.getDestination(piece);            // Fallback destination
+            if (destination == null) return false;
+            const targetRow = Math.floor(destination / this.board.columns);
+            if (!this.canEnterFinalRow(piece, targetRow)) return false;
             const targetPiece = this.board.pieces[destination];
             return !targetPiece || targetPiece.color !== playerColor;   // Valid move if target empty or enemy
         });
@@ -643,6 +723,28 @@ class Game {
                 return;
             }
 
+            if (!piece.wasMoved && this.diceResult !== 1) {
+                this.board.showMessage("You can only start a piece after rolling a 1.");
+                return;
+            }
+
+            if (!Array.isArray(this.serverSelected) || this.serverSelected.length === 0) {
+                if (this.isBlockedByStartRow(piece)) {
+                    this.board.showMessage("Pieces on the final row are stuck until your start row is empty.");
+                    if (!this.hasAvailableMoves() && this.skipTurnButton) this.skipTurnButton.disabled = false;
+                    return;
+                }
+                const tentativeDest = this.getDestination(piece);
+                if (tentativeDest != null) {
+                    const targetRow = Math.floor(tentativeDest / this.board.columns);
+                    if (!this.canEnterFinalRow(piece, targetRow)) {
+                        this.board.showMessage("This piece cannot enter the final row again.");
+                        if (!this.hasAvailableMoves() && this.skipTurnButton) this.skipTurnButton.disabled = false;
+                        return;
+                    }
+                }
+            }
+
             // In online mode: if the server sent explicit options, restrict to them; otherwise allow any own piece when step is "from"
             if (Array.isArray(this.serverSelected) && this.serverSelected.length > 0) {
                 const allowed = this.serverSelected.includes(serverIdx);
@@ -696,9 +798,9 @@ class Game {
         }
 
         if (this.diceResult === null) {                              // Dice must be rolled first
-            this.board.showMessage("Roll the dice first!");
-            return;
-        }
+        this.board.showMessage("Roll the dice first!");
+        return;
+    }
 
         if(!piece.wasMoved && this.diceResult !== 1){                // First move rule: only 1 allows initial movement
             this.board.showMessage("You can only make the first move of a piece after rolling a 1!");
@@ -721,6 +823,10 @@ class Game {
                 .filter(idx => {
                     const occupant = this.board.pieces[idx];
                     return !(occupant && occupant.color === this.board.currentPlayer);
+                })
+                .filter(idx => {
+                    const targetRow = Math.floor(idx / this.board.columns);
+                    return this.canEnterFinalRow(piece, targetRow);
                 });
 
             if (availableChoices.length === 0) {                     // Both paths blocked by own pieces
@@ -742,6 +848,12 @@ class Game {
             targetPiece.domElement.remove();                         // Remove opponent piece if present
         } else if (targetPiece && targetPiece.color === this.board.currentPlayer) {
             this.board.showMessage("You can't move onto your own piece!"); // Prevent collision with own piece
+            return;
+        }
+
+        const destinationRow = Math.floor(destination / this.board.columns);
+        if (!this.canEnterFinalRow(piece, destinationRow)) {
+            this.board.showMessage("This piece cannot enter the final row again.");
             return;
         }
 
@@ -769,18 +881,14 @@ class Game {
     // === Determines if a piece is blocked because start row has unplayed pieces ===
     isBlockedByStartRow(piece) {
         const playerColor = piece.color;                              // Piece's color
-        const startRow = playerColor === "blue" ? 3 : 0;              // Row considered "start" for player
-        const lastRow = playerColor === "blue" ? 0 : 3;               // Row considered "final" for player
+        const startRow = this.getHomeRowFor(playerColor);             // Initial row for this color
+        const lastRow = this.getFinalRowFor(playerColor);             // Opposite/final row for this color
 
         const index = this.board.pieces.indexOf(piece);               // Find piece index in array
         const row = Math.floor(index / this.board.columns);           // Compute row of piece
         if (row !== lastRow) return false;                            // Only relevant for last row
 
-        const hasStartRowPieces = this.board.pieces.some((p, idx) => { // Check if any pieces still in start row
-            if (!p || p.color !== playerColor) return false;
-            const r = Math.floor(idx / this.board.columns);
-            return r === startRow;
-        });
+        const hasStartRowPieces = this.hasPiecesInHomeRow(playerColor); // Check if any pieces still in start row
 
         return hasStartRowPieces;                                     // Return true if start row pieces exist
     }
@@ -889,10 +997,9 @@ class Game {
         let row = Math.floor(destination / this.board.columns);            // Destination row
         let col = destination % this.board.columns;                        // Destination column
 
-        if ((piece.color === "blue" && row === 0) ||                       // Blue reaches final row
-            (piece.color === "red" && row === this.board.rows - 1)){       // Red reaches final row
-                piece.reachedLastRow();                                    // Mark piece visually as final
-            }
+        if (this.isPieceOnFinalRow(piece, row)) {                          // Piece reaches opposite edge
+            piece.reachedLastRow();                                        // Mark piece visually as final
+        }
 
         this.board.pieces[index] = null;                                    // Remove from old position
         this.board.pieces[destination] = piece;                             // Place in new position
@@ -987,6 +1094,7 @@ class SidebarUI {
         enableRollButton(this.game.dice.rollButton);                // Enable dice for first roll
         this.game.playerColor = opponent === "computer" ? "blue" : null; // Single player perspective vs AI
         this.game.applyPerspective();                               // Keep chosen perspective
+        this.game.updateHomeRows(true);                             // Refresh orientation for new layout
 
         // Adjust board orientation for human vs human games
         if (opponent !== "computer") {
@@ -1043,6 +1151,7 @@ class SidebarUI {
             this.game.board.currentPlayer = startingPlayer;             // Set current player
             this.game.playerColor = opponent === "computer" ? "blue" : null; // Keep human perspective if vs AI
             this.game.applyPerspective();
+            this.game.updateHomeRows(true);                             // Re-detect home rows after reset
 
             // Update message box with automatic restart info
             const messageBox = document.getElementById("message-box");
@@ -1070,11 +1179,27 @@ class AIPlayer {
         const possibleMoves = [];
         this.game.board.pieces.forEach((piece, index) => {
             if (!piece || piece.color !== playerColor) return;           // Skip non-AI pieces
-            if (!piece.wasMoved && dice !== 1) return;                   // Canā€™t move unrolled pieces unless dice = 1
+            if (!piece.wasMoved && dice !== 1) return;                   // Can't move unrolled pieces unless dice = 1
             if (this.game.isBlockedByStartRow(piece)) return;           // Skip if start-row rule blocks movement
+
+            const decision = this.game.decidingPoint(piece);
+            if (decision && Array.isArray(decision)) {
+                decision.forEach(idx => {
+                    if (idx == null) return;
+                    const row = Math.floor(idx / this.game.board.columns);
+                    if (!this.game.canEnterFinalRow(piece, row)) return;
+                    const target = this.game.board.pieces[idx];
+                    if (target && target.color === playerColor) return;
+                    const score = this.evaluateMove(piece, idx);
+                    possibleMoves.push({ piece, dest: idx, score, target });
+                });
+                return;
+            }
 
             const dest = this.game.getDestination(piece);               // Calculate destination index
             if (dest == null) return;                                    // Skip invalid destinations
+            const destRow = Math.floor(dest / this.game.board.columns);
+            if (!this.game.canEnterFinalRow(piece, destRow)) return;     // Skip moves that would re-enter final row
 
             const target = this.game.board.pieces[dest];                 // Check if destination occupied
             if (target && target.color === playerColor) return;          // Skip if occupied by own piece
@@ -2242,7 +2367,7 @@ document.addEventListener("DOMContentLoaded", () => {
         game.serverInitialColor = deriveInitialColor(gameData);
 
         // Clear and reposition pieces
-        syncBoardFromServerPieces(gameData.pieces, game.serverInitialColor);
+        syncBoardFromServerPieces(gameData.pieces, game.serverInitialColor, true);
         
         // Set current player (server provides nick, map to color for local logic)
         if (gameData.turn) {
@@ -2289,7 +2414,7 @@ document.addEventListener("DOMContentLoaded", () => {
         gameStatus.innerHTML = '<p>Status: Game started!</p>';
     }
 
-function syncBoardFromServerPieces(pieces, initialColor) {
+function syncBoardFromServerPieces(pieces, initialColor, forceHomeRows = false) {
     if (!Array.isArray(pieces)) return;
     // Only sync if the payload matches current board size
     if (pieces.length !== game.board.pieces.length) return;
@@ -2315,10 +2440,21 @@ function syncBoardFromServerPieces(pieces, initialColor) {
             if (movedFlag) piece.firstmove();
             if (finalFlag) piece.reachedLastRow();
 
-        const mappedIndex = mapServerIndexToLocal(index, rows, cols, initialColor, true);
-        game.board.pieces[mappedIndex] = piece;
-    });
-    game.board.showPieces();
+            const mappedIndex = mapServerIndexToLocal(index, rows, cols, initialColor, true);
+            game.board.pieces[mappedIndex] = piece;
+        });
+
+        // After placing everything, re-derive orientation and mark pieces that naturally sit on their final row
+        game.updateHomeRows(forceHomeRows);
+        game.board.pieces.forEach((piece, idx) => {
+            if (!piece || piece.wasAlreadyInLastRow) return;
+            const row = Math.floor(idx / cols);
+            if (game.isPieceOnFinalRow(piece, row)) {
+                piece.reachedLastRow();
+            }
+        });
+
+        game.board.showPieces();
 
         // If server sent a step, bind clicks to those cells only
         if (game.serverStep && Array.isArray(game.serverSelected)) {
