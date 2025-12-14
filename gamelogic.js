@@ -1331,7 +1331,7 @@ class ServerRequests {
         
         // Definir URL
         this.url = this.useLocalServer ? 
-            "http://twserver.alunos.dcc.fc.up.pt:8131/" : // change to local host to test, ...
+            "http://twserver.alunos.dcc.fc.up.pt:81XX/" : // change to local host to test, etc ...
             "http://twserver.alunos.dcc.fc.up.pt:8008/";
         
         this.group;
@@ -1354,7 +1354,7 @@ class ServerRequests {
         // Event listener
         dropdown.addEventListener('change', (e) => {
             if (e.target.value === 'local') {
-                this.url = "http://twserver.alunos.dcc.fc.up.pt:8131/"; // change to local host to test, ...
+                this.url = "http://twserver.alunos.dcc.fc.up.pt:81XX/"; // change to local host to test, etc...
                 this.useLocalServer = true;
                 localStorage.setItem('tabGameServer', 'local');
             } else {
